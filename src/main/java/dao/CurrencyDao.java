@@ -1,6 +1,6 @@
-package Dao;
+package dao;
 
-import Entity.Currency;
+import entity.Currency;
 import lombok.NoArgsConstructor;
 import util.ConnectionManager;
 
@@ -12,8 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@NoArgsConstructor
 public class CurrencyDao implements Dao {
+
+    private static final CurrencyDao INSTANCE = new CurrencyDao();
 
     public static final String FIND_ALL_CURRENCIES_SQL = """
             SELECT id, code, fullname, sign
@@ -25,6 +26,9 @@ public class CurrencyDao implements Dao {
             FROM Currencies
             WHERE Code = ?
             """;
+
+    private CurrencyDao() {
+    }
 
     @Override
     public List<Currency> findAllEntities() {
@@ -68,6 +72,10 @@ public class CurrencyDao implements Dao {
 
     }
 
+    public static CurrencyDao getInstance() {
+        return INSTANCE;
+    }
+
     private static Currency buildCurrency (ResultSet resultSet) throws SQLException {
         return new Currency(
                 resultSet.getInt("ID"),
@@ -76,4 +84,6 @@ public class CurrencyDao implements Dao {
                 resultSet.getString("Sign")
         );
     }
+
+
 }
