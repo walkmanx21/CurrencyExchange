@@ -13,7 +13,7 @@ public class CurrencyService {
 
     private final CurrencyDao currencyDao = CurrencyDao.getInstance();
 
-    public CurrencyService getInstance() {
+    public static CurrencyService getInstance() {
         return INSTANCE;
     }
 
