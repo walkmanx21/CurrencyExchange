@@ -1,7 +1,6 @@
 package util;
 
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -13,11 +12,10 @@ import java.util.concurrent.BlockingQueue;
 
 public final class ConnectionManager {
     private static final String URL_KEY = "db.url";
-    private static final String PULL_SIZE_KEY = "db.pull.size";
+    private static final String POOL_SIZE_KEY = "db.pool.size";
     public static final Integer DEFAULT_POOL_SIZE = 10;
     private static BlockingQueue<Connection> pool;
     private static List<Connection> sourceConnections;
-
 
     static {
         initConnectionPool();
@@ -28,7 +26,7 @@ public final class ConnectionManager {
 
 
     private static void initConnectionPool() {
-        String poolSize = PropertiesUtil.getProperty(PULL_SIZE_KEY);
+        String poolSize = PropertiesUtil.getProperty(POOL_SIZE_KEY);
         int size = poolSize == null ? DEFAULT_POOL_SIZE : Integer.parseInt(poolSize);
         pool = new ArrayBlockingQueue<>(size);
         sourceConnections = new ArrayList<>(size);

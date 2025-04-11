@@ -15,12 +15,12 @@ import java.util.Optional;
 @NoArgsConstructor
 public class CurrencyDao implements Dao {
 
-    public static final String FIND_ALL_CURRENCIES = """
+    public static final String FIND_ALL_CURRENCIES_SQL = """
             SELECT id, code, fullname, sign
             FROM Currencies
             """;
 
-    private static final String FIND_CURRENCY_BY_CODE = """
+    private static final String FIND_CURRENCY_BY_CODE_SQL = """
             SELECT ID, Code, FullName, Sign
             FROM Currencies
             WHERE Code = ?
@@ -28,16 +28,23 @@ public class CurrencyDao implements Dao {
 
     @Override
     public List<Currency> findAllEntities() {
-
-
-
-        return List.of();
+        try (Connection connection = ConnectionManager.get();
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_CURRENCIES_SQL)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<Currency> currencies = new ArrayList<>();
+            while (resultSet.next()) {
+                currencies.add(buildCurrency(resultSet));
+            }
+            return currencies;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public Optional<Currency> findEntity(Object code) {
         try (Connection connection = ConnectionManager.get();
-             PreparedStatement preparedStatement = connection.prepareStatement(FIND_CURRENCY_BY_CODE)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_CURRENCY_BY_CODE_SQL)) {
             preparedStatement.setString(1, (String)code);
             ResultSet resultSet = preparedStatement.executeQuery();
             List <Currency> list = new ArrayList<>();

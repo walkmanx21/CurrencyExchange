@@ -8,8 +8,7 @@ public class Main {
     public static void main(String[] args) {
         try {
             CurrencyDao currencyDao = new CurrencyDao();
-            Optional currency = currencyDao.findEntity("EUR");
-            System.out.println(currency);
+            System.out.println(currencyDao.findAllEntities());
         } finally {
             ConnectionManager.closePool();
         }
