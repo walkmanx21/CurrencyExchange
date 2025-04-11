@@ -15,6 +15,11 @@ import java.util.Optional;
 @NoArgsConstructor
 public class CurrencyDao implements Dao {
 
+    public static final String FIND_ALL_CURRENCIES = """
+            SELECT id, code, fullname, sign
+            FROM Currencies
+            """;
+
     private static final String FIND_CURRENCY_BY_CODE = """
             SELECT ID, Code, FullName, Sign
             FROM Currencies
@@ -22,7 +27,10 @@ public class CurrencyDao implements Dao {
             """;
 
     @Override
-    public List findAllEntities() {
+    public List<Currency> findAllEntities() {
+
+
+
         return List.of();
     }
 
@@ -35,12 +43,7 @@ public class CurrencyDao implements Dao {
             List <Currency> list = new ArrayList<>();
             Currency currency = null;
             if (resultSet.next()) {
-                currency = new Currency(
-                        resultSet.getInt("ID"),
-                        resultSet.getString("Code"),
-                        resultSet.getString("FullName"),
-                        resultSet.getString("Sign")
-                );
+                currency = buildCurrency(resultSet);
             }
             return Optional.ofNullable(currency);
         } catch (SQLException e) {
@@ -56,5 +59,14 @@ public class CurrencyDao implements Dao {
     @Override
     public void update(Object entity) {
 
+    }
+
+    private static Currency buildCurrency (ResultSet resultSet) throws SQLException {
+        return new Currency(
+                resultSet.getInt("ID"),
+                resultSet.getString("Code"),
+                resultSet.getString("FullName"),
+                resultSet.getString("Sign")
+        );
     }
 }
