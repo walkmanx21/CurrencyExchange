@@ -13,7 +13,8 @@ import entity.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet("/currency/EUR")
+@WebServlet(urlPatterns = {"/currency/USD", "/currency/EUR", "/currency/JPY", "/currency/RUB", "/currency/CHF"})
+
 public class OneCurrencyServlet extends HttpServlet {
 
     @Override
