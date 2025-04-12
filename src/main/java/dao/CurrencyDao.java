@@ -1,7 +1,6 @@
 package dao;
 
 import entity.Currency;
-import lombok.NoArgsConstructor;
 import util.ConnectionManager;
 
 import java.sql.Connection;
@@ -12,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CurrencyDao implements Dao {
+public class CurrencyDao {
 
     private static final CurrencyDao INSTANCE = new CurrencyDao();
 
@@ -30,7 +29,7 @@ public class CurrencyDao implements Dao {
     private CurrencyDao() {
     }
 
-    @Override
+
     public List<Currency> findAllEntities() {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_CURRENCIES_SQL)) {
@@ -45,29 +44,29 @@ public class CurrencyDao implements Dao {
         }
     }
 
-    @Override
-    public Optional<Currency> findEntity(Object code) {
+
+    public Optional<Currency> findEntity(Currency entity) {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_CURRENCY_BY_CODE_SQL)) {
-            preparedStatement.setString(1, (String)code);
+            preparedStatement.setString(1, entity.getCode());
             ResultSet resultSet = preparedStatement.executeQuery();
             List <Currency> list = new ArrayList<>();
-            Currency currency = null;
+            Currency currencyFull = null;
             if (resultSet.next()) {
-                currency = buildCurrency(resultSet);
+                currencyFull = buildCurrency(resultSet);
             }
-            return Optional.ofNullable(currency);
+            return Optional.ofNullable(currencyFull);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    @Override
+
     public Object create(Object entity) {
         return null;
     }
 
-    @Override
+
     public void update(Object entity) {
 
     }

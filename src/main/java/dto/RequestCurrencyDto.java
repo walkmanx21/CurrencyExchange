@@ -1,12 +1,14 @@
 package dto;
 
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.Setter;
 
-@Getter
 @RequiredArgsConstructor
-@ToString
-public class CurrencyDto {
+@Getter
+@Setter
+public class RequestCurrencyDto {
     private final String code;
+
 }

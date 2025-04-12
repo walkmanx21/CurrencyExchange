@@ -1,8 +1,5 @@
 package servlet;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import dto.CurrencyDto;
-import jakarta.json.Json;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -13,11 +10,9 @@ import service.CurrencyService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 
 @WebServlet("/currencies")
-public class CurrencyServlet extends HttpServlet {
+public class AllCurrenciesServlet extends HttpServlet {
     private final CurrencyService currencyService = CurrencyService.getInstance();
 
 
