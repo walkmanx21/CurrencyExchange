@@ -13,7 +13,7 @@ public class OneCurrencyService {
         return INSTANCE;
     }
 
-    public void createCurrency (RequestCurrencyDto requestCurrencyDto) {
+    public Currency createCurrency (RequestCurrencyDto requestCurrencyDto) {
         Currency currency = new Currency(
                 null,
                 requestCurrencyDto.getCode(),
@@ -21,7 +21,7 @@ public class OneCurrencyService {
                 null
         );
         CurrencyDao currencyDao = CurrencyDao.getInstance();
-        currencyDao.findEntity(currency);
+        return currencyDao.findEntity(currency);
     }
 
     private OneCurrencyService(){
