@@ -45,17 +45,16 @@ public class CurrencyDao {
     }
 
 
-    public Optional<Currency> findEntity(Currency entity) {
+    public Currency findEntity(Currency currency) {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_CURRENCY_BY_CODE_SQL)) {
-            preparedStatement.setString(1, entity.getCode());
+            preparedStatement.setString(1, currency.getCode());
             ResultSet resultSet = preparedStatement.executeQuery();
-            List <Currency> list = new ArrayList<>();
             Currency currencyFull = null;
             if (resultSet.next()) {
                 currencyFull = buildCurrency(resultSet);
             }
-            return Optional.ofNullable(currencyFull);
+            return currencyFull;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

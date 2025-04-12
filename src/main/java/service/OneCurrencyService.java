@@ -3,7 +3,8 @@ package service;
 import dao.CurrencyDao;
 import dto.RequestCurrencyDto;
 import entity.Currency;
-import servlet.OneCurrencyServlet;
+
+import java.util.Optional;
 
 public class OneCurrencyService {
     private static final OneCurrencyService INSTANCE = new OneCurrencyService();
