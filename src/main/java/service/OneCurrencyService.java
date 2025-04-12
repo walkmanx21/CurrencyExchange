@@ -1,10 +1,8 @@
 package service;
 
 import dao.CurrencyDao;
-import dto.RequestCurrencyDto;
+import dto.CurrencyDto;
 import entity.Currency;
-
-import java.util.Optional;
 
 public class OneCurrencyService {
     private static final OneCurrencyService INSTANCE = new OneCurrencyService();
@@ -13,10 +11,10 @@ public class OneCurrencyService {
         return INSTANCE;
     }
 
-    public Currency createCurrency (RequestCurrencyDto requestCurrencyDto) {
+    public Currency createCurrency (CurrencyDto currencyDto) {
         Currency currency = new Currency(
                 null,
-                requestCurrencyDto.getCode(),
+                currencyDto.getCode(),
                 null,
                 null
         );

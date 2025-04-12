@@ -1,7 +1,7 @@
 package servlet;
 
 import com.google.gson.Gson;
-import dto.RequestCurrencyDto;
+import dto.CurrencyDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -20,11 +20,12 @@ public class OneCurrencyServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String servletPath = req.getPathInfo();
-        String currencyCode = servletPath.substring(1, 4);
-        RequestCurrencyDto requestCurrencyDto = new RequestCurrencyDto(currencyCode);
+        String servletPathInfo = req.getPathInfo();
+        String currencyCode = servletPathInfo.substring(1, 4);
+
+        CurrencyDto currencyDto = new CurrencyDto(currencyCode);
         OneCurrencyService oneCurrencyService = OneCurrencyService.getInstance();
-        Currency currency = oneCurrencyService.createCurrency(requestCurrencyDto);
+        Currency currency = oneCurrencyService.createCurrency(currencyDto);
 
         String currencyJsonString = new Gson().toJson(currency);
 
