@@ -13,14 +13,15 @@ import entity.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet(urlPatterns = {"/currency/USD", "/currency/EUR", "/currency/JPY", "/currency/RUB", "/currency/CHF"})
+//@WebServlet(urlPatterns = {"/currency/USD", "/currency/EUR", "/currency/JPY", "/currency/RUB", "/currency/CHF"})
+@WebServlet("/currency/*")
 
 public class OneCurrencyServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String servletPath = req.getServletPath();
-        String currencyCode = servletPath.substring(10, 13);
+        String servletPath = req.getPathInfo();
+        String currencyCode = servletPath.substring(1, 4);
         RequestCurrencyDto requestCurrencyDto = new RequestCurrencyDto(currencyCode);
         OneCurrencyService oneCurrencyService = OneCurrencyService.getInstance();
         Currency currency = oneCurrencyService.createCurrency(requestCurrencyDto);
