@@ -18,6 +18,7 @@ public final class ConnectionManager {
     private static List<Connection> sourceConnections;
 
     static {
+        loadDriver();
         initConnectionPool();
     }
 
@@ -49,14 +50,6 @@ public final class ConnectionManager {
         }
     }
 
-    private static Connection open() {
-        try {
-            return DriverManager.getConnection(PropertiesUtil.getProperty(URL_KEY));
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public static void closePool() {
         for (Connection sourceConnection : sourceConnections) {
             try {
@@ -66,5 +59,22 @@ public final class ConnectionManager {
             }
         }
     }
+
+    private static Connection open() {
+        try {
+            return DriverManager.getConnection(PropertiesUtil.getProperty(URL_KEY));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void loadDriver() {
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
 

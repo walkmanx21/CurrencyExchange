@@ -13,6 +13,8 @@ import service.CurrencyService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet("/currencies")
 public class CurrencyServlet extends HttpServlet {
@@ -24,9 +26,8 @@ public class CurrencyServlet extends HttpServlet {
         resp.setContentType("text/html");
         resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 
-        PrintWriter pw = resp.getWriter();
-        pw.println("<html>");
-        pw.println("<h1> Все круто </h1>");
-        pw.println("</html>");
+        try (PrintWriter pw = resp.getWriter()) {
+            pw.write("<h1>  Список валют: </h1>");
+        }
     }
 }

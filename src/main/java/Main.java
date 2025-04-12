@@ -1,12 +1,12 @@
 import dao.CurrencyDao;
+import dto.CurrencyDto;
+import service.CurrencyService;
 import util.ConnectionManager;
 
 public class Main {
-    public static void main(String[] args) {
-        try {
+    private static final CurrencyService currencyService = CurrencyService.getInstance();
 
-        } finally {
-            ConnectionManager.closePool();
-        }
+    public static void main(String[] args) {
+        System.out.println(currencyService.findAllCurrencies().toString());
     }
 }
