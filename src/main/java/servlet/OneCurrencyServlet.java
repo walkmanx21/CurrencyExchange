@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import service.OneCurrencyService;
 import entity.*;
+import util.ResponsePrintWriter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,12 +20,12 @@ public class OneCurrencyServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        PrintWriter out = resp.getWriter();
+
         String servletPathInfo = req.getPathInfo();
         boolean noCurrencyCode = servletPathInfo.length() == 1;
 
         if (noCurrencyCode) {
-            print(resp, out, 400, "text/html", "Код валюты отсутствует в адресе");
+            ResponsePrintWriter.printResponse(resp,400, "text/html", "Код валюты отсутствует в адресе");
             return;
         }
 
@@ -36,21 +37,13 @@ public class OneCurrencyServlet extends HttpServlet {
 
             if (currency != null) {
                 String currencyJsonString = new Gson().toJson(currency);
-                print(resp, out, 200, "application/json", currencyJsonString);
+                ResponsePrintWriter.printResponse(resp,200, "application/json", currencyJsonString);
             } else {
-                print(resp, out, 404, "text/html", "Валюта не найдена");
+                ResponsePrintWriter.printResponse(resp,404, "text/html", "Валюта не найдена");
             }
 
         } else {
-            print(resp, out, 400, "text/html", "Некорректный код валюты");
+            ResponsePrintWriter.printResponse(resp,400, "text/html", "Некорректный код валюты");
         }
-    }
-
-    private void print (HttpServletResponse resp, PrintWriter out, int status, String contentType, String message) {
-        resp.setStatus(status);
-        resp.setContentType(contentType);
-        resp.setCharacterEncoding("UTF-8");
-        out.print(message);
-        out.flush();
     }
 }

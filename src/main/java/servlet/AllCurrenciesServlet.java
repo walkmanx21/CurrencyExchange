@@ -8,6 +8,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import util.ResponsePrintWriter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -23,15 +24,7 @@ public class AllCurrenciesServlet extends HttpServlet {
         List<Currency> currencies = currencyDao.findAllEntities();
 
         String currenciesJsonString = new Gson().toJson(currencies);
-        print(resp, 200, "application/json", currenciesJsonString);
+        ResponsePrintWriter.printResponse(resp, 200, "application/json", currenciesJsonString);
     }
 
-    private void print (HttpServletResponse resp, int status, String contentType, String message) throws IOException {
-        PrintWriter out = resp.getWriter();
-        resp.setStatus(status);
-        resp.setContentType(contentType);
-        resp.setCharacterEncoding("UTF-8");
-        out.print(message);
-        out.flush();
-    }
 }
