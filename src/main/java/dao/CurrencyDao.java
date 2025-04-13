@@ -63,16 +63,16 @@ public class CurrencyDao {
     }
 
 
-    public Currency create(Currency currency) {
+    public Currency insertNewCurrency(Currency currency) {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_NEW_CURRENCY_SQL, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, currency.getCode());
             preparedStatement.setString(2, currency.getFullName());
             preparedStatement.setString(3, currency.getSign());
             preparedStatement.executeUpdate();
-            var generatedKeys = preparedStatement.getGeneratedKeys();
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                currency.setId(generatedKeys.getInt("ID"));
+                currency.setId(generatedKeys.getInt(1));
             }
             return currency;
         } catch (SQLException e) {

@@ -1,7 +1,7 @@
-import service.OneCurrencyService;
+import service.CurrencyService;
 
 public class Main {
-    static OneCurrencyService oneCurrencyService = OneCurrencyService.getInstance();
+    static CurrencyService currencyService = CurrencyService.getInstance();
 
     public static void main(String[] args) {
 

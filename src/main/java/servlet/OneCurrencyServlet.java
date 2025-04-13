@@ -7,16 +7,16 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import service.OneCurrencyService;
+import service.CurrencyService;
 import entity.*;
 import util.ResponsePrintWriter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 @WebServlet("/currency/*")
 
 public class OneCurrencyServlet extends HttpServlet {
+    private final CurrencyService currencyService = CurrencyService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -32,8 +32,7 @@ public class OneCurrencyServlet extends HttpServlet {
         if (servletPathInfo.length() == 4) {
             String currencyCode = servletPathInfo.substring(1, 4).toUpperCase();
             CurrencyDto currencyDto = new CurrencyDto(currencyCode);
-            OneCurrencyService oneCurrencyService = OneCurrencyService.getInstance();
-            Currency currency = oneCurrencyService.createCurrency(currencyDto);
+            Currency currency = currencyService.findOneCurrency(currencyDto);
 
             if (currency != null) {
                 String currencyJsonString = new Gson().toJson(currency);
