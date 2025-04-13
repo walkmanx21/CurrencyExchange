@@ -15,8 +15,8 @@ public class OneCurrencyService {
         Currency currency = new Currency(
                 null,
                 currencyDto.getCode(),
-                null,
-                null
+                currencyDto.getFullName(),
+                currencyDto.getSign()
         );
         CurrencyDao currencyDao = CurrencyDao.getInstance();
         return currencyDao.findEntity(currency);
