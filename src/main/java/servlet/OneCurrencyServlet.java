@@ -21,13 +21,10 @@ public class OneCurrencyServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PrintWriter out = resp.getWriter();
         String servletPathInfo = req.getPathInfo();
-        boolean noCode = servletPathInfo.length() == 1;
+        boolean noCurrencyCode = servletPathInfo.length() == 1;
 
-        if (noCode) {
-            resp.setStatus(400);
-            resp.setContentType("text/html");
-            resp.setCharacterEncoding("UTF-8");
-            out.print("Код валюты отсутствует в адресе");
+        if (noCurrencyCode) {
+            print(resp, out, 400, "text/html", "Код валюты отсутствует в адресе");
             return;
         }
 
@@ -38,26 +35,22 @@ public class OneCurrencyServlet extends HttpServlet {
             Currency currency = oneCurrencyService.createCurrency(currencyDto);
 
             if (currency != null) {
-                resp.setStatus(200);
-
                 String currencyJsonString = new Gson().toJson(currency);
-                resp.setContentType("application/json");
-                resp.setCharacterEncoding("UTF-8");
-                out.print(currencyJsonString);
-                out.flush();
+                print(resp, out, 200, "application/json", currencyJsonString);
             } else {
-                resp.setStatus(404);
-                resp.setContentType("text/html");
-                resp.setCharacterEncoding("UTF-8");
-                out.print("Валюта не найдена");
-                out.flush();
+                print(resp, out, 404, "text/html", "Валюта не найдена");
             }
-        } else {
-            resp.setStatus(400);
-            resp.setContentType("text/html");
-            resp.setCharacterEncoding("UTF-8");
-            out.print("Некорректный код валюты");
-        }
 
+        } else {
+            print(resp, out, 400, "text/html", "Некорректный код валюты");
+        }
+    }
+
+    private void print (HttpServletResponse resp, PrintWriter out, int status, String contentType, String message) {
+        resp.setStatus(status);
+        resp.setContentType(contentType);
+        resp.setCharacterEncoding("UTF-8");
+        out.print(message);
+        out.flush();
     }
 }
