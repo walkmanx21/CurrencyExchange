@@ -3,10 +3,7 @@ package dao;
 import entity.Currency;
 import util.ConnectionManager;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +21,11 @@ public class CurrencyDao {
             SELECT ID, Code, FullName, Sign
             FROM Currencies
             WHERE Code = ?
+            """;
+
+    public static final String INSERT_NEW_CURRENCY_SQL = """
+            INSERT INTO Currencies (Code, FullName, Sign) 
+            VALUES (?, ?, ?)
             """;
 
     private CurrencyDao() {
@@ -61,8 +63,21 @@ public class CurrencyDao {
     }
 
 
-    public Object create(Object entity) {
-        return null;
+    public Currency create(Currency currency) {
+        try (Connection connection = ConnectionManager.get();
+             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_NEW_CURRENCY_SQL, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, currency.getCode());
+            preparedStatement.setString(2, currency.getFullName());
+            preparedStatement.setString(3, currency.getSign());
+            preparedStatement.executeUpdate();
+            var generatedKeys = preparedStatement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                currency.setId(generatedKeys.getInt("ID"));
+            }
+            return currency;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
