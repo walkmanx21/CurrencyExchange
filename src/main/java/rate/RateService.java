@@ -7,6 +7,9 @@ import exception.ExchangeRateNotFoundException;
 import rate.dto.RateRequestDto;
 import rate.dto.RateResponseDto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class RateService {
     private static final RateService INSTANCE = new RateService();
     private final RateDao rateDao = RateDao.getInstance();
@@ -29,9 +32,14 @@ public class RateService {
         return rateResponseDto;
     }
 
-    public RateResponseDto findAllExchangeRate(RateRequestDto rateRequestDto) {
-
-        return null;
+    public List<RateResponseDto> findAllExchangeRate() {
+        List<Rate> rates = rateDao.findAllRates();
+        List<RateResponseDto> responseDtoList = new ArrayList<>();
+        for(Rate rate : rates) {
+            buildFinalRate(rate);
+            responseDtoList.add(buildResponseDto(rate));
+        }
+        return responseDtoList;
     }
 
     private Rate buildPreRate(RateRequestDto rateRequestDto) {
