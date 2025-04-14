@@ -9,10 +9,10 @@ public final class ResponsePrintWriter {
     private ResponsePrintWriter() {
     }
 
-    public static void printResponse (HttpServletResponse resp, int status, String contentType, String message) {
+    public static void printResponse (HttpServletResponse resp, int status, String message) {
         try (PrintWriter out = resp.getWriter()) {
             resp.setStatus(status);
-            resp.setContentType(contentType);
+            resp.setContentType("application/json");
             resp.setCharacterEncoding("UTF-8");
             out.print(message);
             out.flush();

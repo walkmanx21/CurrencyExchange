@@ -12,7 +12,7 @@ import java.util.Currency;
 @RequiredArgsConstructor
 public class RateResponseDto {
     private final Integer id;
-    private final Currency baseCurrency;
-    private final Currency targetCurrency;
+    private final currency.Currency baseCurrency;
+    private final currency.Currency targetCurrency;
     private final BigDecimal rate;
 }

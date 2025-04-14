@@ -13,8 +13,8 @@ import java.util.Currency;
 public class Rate {
     private Integer id;
     private String baseCurrencyCode;
-    private Currency baseCurrency;
+    private currency.Currency baseCurrency;
     private String targetCurrencyCode;
-    private Currency targetCurrency;
+    private currency.Currency targetCurrency;
     private BigDecimal rate;
 }

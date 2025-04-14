@@ -6,7 +6,8 @@ import exception.CurrencyAlreadyExistsException;
 
 public class CurrencyService {
     private static final CurrencyService INSTANCE = new CurrencyService();
-    private final CurrencyDao currencyDao = CurrencyDao.getInstance();
+    private static final CurrencyDao currencyDao = CurrencyDao.getInstance();
+
     public static CurrencyService getInstance() {
         return INSTANCE;
     }
@@ -14,16 +15,14 @@ public class CurrencyService {
     private CurrencyService(){
     }
 
-    public CurrencyResponseDto findOneCurrency (CurrencyRequestDto currencyRequestDto) {
+    public Currency findOneCurrency (CurrencyRequestDto currencyRequestDto) {
         Currency currency = createCurrency(currencyRequestDto);
-        currency = currencyDao.findCurrency(currency);
-        return buildCurrencyResponseDto(currency);
+        return currencyDao.findCurrency(currency);
     }
 
-    public CurrencyResponseDto insertCurrency (CurrencyRequestDto currencyRequestDto) throws CurrencyAlreadyExistsException {
+    public Currency insertCurrency (CurrencyRequestDto currencyRequestDto) throws CurrencyAlreadyExistsException {
         Currency currency = createCurrency(currencyRequestDto);
-        currency = currencyDao.insertNewCurrency(currency);
-        return buildCurrencyResponseDto(currency);
+        return currencyDao.insertNewCurrency(currency);
     }
 
     private Currency createCurrency (CurrencyRequestDto currencyRequestDto) {

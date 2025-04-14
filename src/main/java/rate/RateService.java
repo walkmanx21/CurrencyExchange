@@ -1,11 +1,15 @@
 package rate;
 
+import currency.CurrencyService;
+import currency.dto.CurrencyRequestDto;
+import currency.dto.CurrencyResponseDto;
 import rate.dto.RateRequestDto;
 import rate.dto.RateResponseDto;
 
 public class RateService {
-    public static final RateService INSTANCE = new RateService();
-
+    private static final RateService INSTANCE = new RateService();
+    private final RateDao rateDao = RateDao.getInstance();
+    private final CurrencyService currencyService = CurrencyService.getInstance();
     public static RateService getInstance() {
         return INSTANCE;
     }
@@ -14,17 +18,18 @@ public class RateService {
     }
 
     public RateResponseDto findOneExchangeRate(RateRequestDto rateRequestDto) {
-        Rate rate = createExchangeRate(rateRequestDto);
+        Rate rate = buildPreRate(rateRequestDto);
+        rate = rateDao.findOneRate(rate);
+        buildFinalRate(rate);
+        return buildResponseDto(rate);
+    }
 
+    public RateResponseDto findAllExchangeRate(RateRequestDto rateRequestDto) {
 
         return null;
     }
 
-
-
-
-
-    private Rate createExchangeRate(RateRequestDto rateRequestDto) {
+    private Rate buildPreRate(RateRequestDto rateRequestDto) {
         return new Rate(
                 null,
                 rateRequestDto.getBaseCurrencyCode(),
@@ -35,5 +40,20 @@ public class RateService {
         );
     }
 
+    private void buildFinalRate (Rate rate) {
+        CurrencyRequestDto baseCurrencyDto = new CurrencyRequestDto(rate.getBaseCurrencyCode());
+        CurrencyRequestDto targetCurrencyDto = new CurrencyRequestDto(rate.getTargetCurrencyCode());
+        rate.setBaseCurrency(currencyService.findOneCurrency(baseCurrencyDto));
+        rate.setTargetCurrency(currencyService.findOneCurrency(targetCurrencyDto));
+    }
+
+    private RateResponseDto buildResponseDto (Rate rate) {
+        return new RateResponseDto(
+                rate.getId(),
+                rate.getBaseCurrency(),
+                rate.getTargetCurrency(),
+                rate.getRate()
+        );
+    }
 
 }
