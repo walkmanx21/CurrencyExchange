@@ -1,12 +1,12 @@
 package dao;
 
 import entity.Currency;
+import exception.CurrencyAlreadyExistsException;
 import util.ConnectionManager;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class CurrencyDao {
 
@@ -63,7 +63,7 @@ public class CurrencyDao {
     }
 
 
-    public Currency insertNewCurrency(Currency currency) {
+    public Currency insertNewCurrency(Currency currency) throws CurrencyAlreadyExistsException {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_NEW_CURRENCY_SQL, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, currency.getCode());
@@ -76,7 +76,7 @@ public class CurrencyDao {
             }
             return currency;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new CurrencyAlreadyExistsException(e);
         }
     }
 

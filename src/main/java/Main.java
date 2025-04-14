@@ -1,5 +1,9 @@
 import service.CurrencyService;
 
+/**
+ * Hello
+ */
+
 public class Main {
     static CurrencyService currencyService = CurrencyService.getInstance();
 

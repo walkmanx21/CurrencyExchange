@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import dao.CurrencyDao;
 import dto.CurrencyDto;
 import entity.Currency;
+import exception.CurrencyAlreadyExistsException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -23,11 +24,16 @@ public class AllCurrenciesServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String code = req.getParameter("code");
-        String fullName = req.getParameter("fullName");
+        String fullName = req.getParameter("name");
         String sign = req.getParameter("sign");
 
         CurrencyDto currencyDto = new CurrencyDto(code, fullName, sign);
-        Currency currency = currencyService.insertCurrency(currencyDto);
+        Currency currency = null;
+        try {
+            currency = currencyService.insertCurrency(currencyDto);
+        } catch (CurrencyAlreadyExistsException e) {
+            ResponsePrintWriter.printResponse(resp, 409, "application/json", "Валюта с указанным кодом уже существует");
+        }
         String currencyJsonString = new Gson().toJson(currency);
         ResponsePrintWriter.printResponse(resp, 201, "application/json", currencyJsonString);
 

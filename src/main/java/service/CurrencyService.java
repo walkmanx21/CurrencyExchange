@@ -3,6 +3,7 @@ package service;
 import dao.CurrencyDao;
 import dto.CurrencyDto;
 import entity.Currency;
+import exception.CurrencyAlreadyExistsException;
 
 public class CurrencyService {
     private static final CurrencyService INSTANCE = new CurrencyService();
@@ -16,7 +17,7 @@ public class CurrencyService {
         return currencyDao.findEntity(currency);
     }
 
-    public Currency insertCurrency (CurrencyDto currencyDto) {
+    public Currency insertCurrency (CurrencyDto currencyDto) throws CurrencyAlreadyExistsException {
         Currency currency = createCurrency(currencyDto);
         return currencyDao.insertNewCurrency(currency);
     }
