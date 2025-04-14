@@ -1,4 +1,4 @@
-package entity;
+package currency;
 
 import lombok.*;
 

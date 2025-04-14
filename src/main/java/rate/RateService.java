@@ -1,8 +1,7 @@
-package service;
+package rate;
 
-import dto.RateRequestDto;
-import dto.RateResponseDto;
-import entity.ExchangeRate;
+import rate.dto.RateRequestDto;
+import rate.dto.RateResponseDto;
 
 public class RateService {
     public static final RateService INSTANCE = new RateService();
@@ -15,7 +14,7 @@ public class RateService {
     }
 
     public RateResponseDto findOneExchangeRate(RateRequestDto rateRequestDto) {
-        ExchangeRate exchangeRate = createExchangeRate(rateRequestDto);
+        Rate rate = createExchangeRate(rateRequestDto);
 
 
         return null;
@@ -25,8 +24,8 @@ public class RateService {
 
 
 
-    private ExchangeRate createExchangeRate(RateRequestDto rateRequestDto) {
-        return new ExchangeRate(
+    private Rate createExchangeRate(RateRequestDto rateRequestDto) {
+        return new Rate(
                 null,
                 rateRequestDto.getBaseCurrencyCode(),
                 null,

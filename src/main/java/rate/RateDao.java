@@ -1,6 +1,6 @@
-package dao;
+package rate;
 
-import entity.Currency;
+import currency.Currency;
 import util.ConnectionManager;
 
 import java.sql.Connection;

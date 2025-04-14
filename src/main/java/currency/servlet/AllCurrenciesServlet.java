@@ -1,17 +1,17 @@
-package servlet;
+package currency.servlet;
 
 import com.google.gson.Gson;
-import dao.CurrencyDao;
-import dto.CurrencyRequestDto;
-import dto.CurrencyResponseDto;
-import entity.Currency;
+import currency.CurrencyDao;
+import currency.dto.CurrencyRequestDto;
+import currency.dto.CurrencyResponseDto;
+import currency.CurrencyService;
+import currency.Currency;
 import exception.CurrencyAlreadyExistsException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import service.CurrencyService;
 import util.ResponsePrintWriter;
 
 import java.io.IOException;

@@ -1,4 +1,4 @@
-import service.CurrencyService;
+import currency.CurrencyService;
 
 /**
  * Hello

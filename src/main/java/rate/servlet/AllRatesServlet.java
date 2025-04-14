@@ -1,4 +1,4 @@
-package servlet;
+package rate.servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

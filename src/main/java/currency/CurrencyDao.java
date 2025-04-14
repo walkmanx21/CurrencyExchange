@@ -1,6 +1,5 @@
-package dao;
+package currency;
 
-import entity.Currency;
 import exception.CurrencyAlreadyExistsException;
 import util.ConnectionManager;
 

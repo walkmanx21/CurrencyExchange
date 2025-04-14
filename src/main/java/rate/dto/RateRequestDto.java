@@ -1,4 +1,4 @@
-package dto;
+package rate.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

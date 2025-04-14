@@ -1,9 +1,7 @@
-package service;
+package currency;
 
-import dao.CurrencyDao;
-import dto.CurrencyRequestDto;
-import dto.CurrencyResponseDto;
-import entity.Currency;
+import currency.dto.CurrencyRequestDto;
+import currency.dto.CurrencyResponseDto;
 import exception.CurrencyAlreadyExistsException;
 
 public class CurrencyService {

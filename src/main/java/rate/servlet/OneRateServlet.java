@@ -1,13 +1,13 @@
-package servlet;
+package rate.servlet;
 
-import dto.RateRequestDto;
-import dto.RateResponseDto;
+import rate.dto.RateRequestDto;
+import rate.dto.RateResponseDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import service.RateService;
+import rate.RateService;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package dto;
+package currency.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
