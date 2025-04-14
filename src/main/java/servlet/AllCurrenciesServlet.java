@@ -2,7 +2,8 @@ package servlet;
 
 import com.google.gson.Gson;
 import dao.CurrencyDao;
-import dto.CurrencyDto;
+import dto.CurrencyRequestDto;
+import dto.CurrencyResponseDto;
 import entity.Currency;
 import exception.CurrencyAlreadyExistsException;
 import jakarta.servlet.ServletException;
@@ -27,21 +28,21 @@ public class AllCurrenciesServlet extends HttpServlet {
         String fullName = req.getParameter("name");
         String sign = req.getParameter("sign");
 
-        CurrencyDto currencyDto = new CurrencyDto(code, fullName, sign);
-        Currency currency = null;
+        CurrencyRequestDto currencyRequestDto = new CurrencyRequestDto(code, fullName, sign);
+        CurrencyResponseDto currencyResponseDto = null;
         try {
-            currency = currencyService.insertCurrency(currencyDto);
+            currencyResponseDto = currencyService.insertCurrency(currencyRequestDto);
         } catch (CurrencyAlreadyExistsException e) {
             ResponsePrintWriter.printResponse(resp, 409, "application/json", "Валюта с указанным кодом уже существует");
         }
-        String currencyJsonString = new Gson().toJson(currency);
+        String currencyJsonString = new Gson().toJson(currencyResponseDto);
         ResponsePrintWriter.printResponse(resp, 201, "application/json", currencyJsonString);
 
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<Currency> currencies = currencyDao.findAllEntities();
+        List<Currency> currencies = currencyDao.findAllCurrencies();
         String currenciesJsonString = new Gson().toJson(currencies);
         ResponsePrintWriter.printResponse(resp, 200, "application/json", currenciesJsonString);
     }

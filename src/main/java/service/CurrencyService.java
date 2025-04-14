@@ -1,7 +1,8 @@
 package service;
 
 import dao.CurrencyDao;
-import dto.CurrencyDto;
+import dto.CurrencyRequestDto;
+import dto.CurrencyResponseDto;
 import entity.Currency;
 import exception.CurrencyAlreadyExistsException;
 
@@ -12,25 +13,36 @@ public class CurrencyService {
         return INSTANCE;
     }
 
-    public Currency findOneCurrency (CurrencyDto currencyDto) {
-        Currency currency = createCurrency(currencyDto);
-        return currencyDao.findEntity(currency);
+    public CurrencyResponseDto findOneCurrency (CurrencyRequestDto currencyRequestDto) {
+        Currency currency = createCurrency(currencyRequestDto);
+        currency = currencyDao.findCurrency(currency);
+        return buildCurrencyResponseDto(currency);
     }
 
-    public Currency insertCurrency (CurrencyDto currencyDto) throws CurrencyAlreadyExistsException {
-        Currency currency = createCurrency(currencyDto);
-        return currencyDao.insertNewCurrency(currency);
+    public CurrencyResponseDto insertCurrency (CurrencyRequestDto currencyRequestDto) throws CurrencyAlreadyExistsException {
+        Currency currency = createCurrency(currencyRequestDto);
+        currency = currencyDao.insertNewCurrency(currency);
+        return buildCurrencyResponseDto(currency);
     }
 
-    private Currency createCurrency (CurrencyDto currencyDto) {
+    private Currency createCurrency (CurrencyRequestDto currencyRequestDto) {
         return new Currency(
                 null,
-                currencyDto.getCode(),
-                currencyDto.getFullName(),
-                currencyDto.getSign()
+                currencyRequestDto.getCode(),
+                currencyRequestDto.getFullName(),
+                currencyRequestDto.getSign()
         );
     }
 
     private CurrencyService(){
+    }
+
+    private CurrencyResponseDto buildCurrencyResponseDto (Currency currency) {
+        return new CurrencyResponseDto(
+                currency.getId(),
+                currency.getCode(),
+                currency.getFullName(),
+                currency.getSign()
+        );
     }
 }

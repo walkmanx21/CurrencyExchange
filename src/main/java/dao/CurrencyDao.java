@@ -32,7 +32,7 @@ public class CurrencyDao {
     }
 
 
-    public List<Currency> findAllEntities() {
+    public List<Currency> findAllCurrencies() {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_CURRENCIES_SQL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -47,7 +47,7 @@ public class CurrencyDao {
     }
 
 
-    public Currency findEntity(Currency currency) {
+    public Currency findCurrency(Currency currency) {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_CURRENCY_BY_CODE_SQL)) {
             preparedStatement.setString(1, currency.getCode());
