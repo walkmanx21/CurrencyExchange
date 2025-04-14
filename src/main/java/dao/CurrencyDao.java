@@ -12,6 +12,9 @@ public class CurrencyDao {
 
     private static final CurrencyDao INSTANCE = new CurrencyDao();
 
+    private CurrencyDao() {
+    }
+
     public static final String FIND_ALL_CURRENCIES_SQL = """
             SELECT id, code, fullname, sign
             FROM Currencies
@@ -27,9 +30,6 @@ public class CurrencyDao {
             INSERT INTO Currencies (Code, FullName, Sign) 
             VALUES (?, ?, ?)
             """;
-
-    private CurrencyDao() {
-    }
 
 
     public List<Currency> findAllCurrencies() {

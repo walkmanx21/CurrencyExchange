@@ -13,6 +13,9 @@ public class CurrencyService {
         return INSTANCE;
     }
 
+    private CurrencyService(){
+    }
+
     public CurrencyResponseDto findOneCurrency (CurrencyRequestDto currencyRequestDto) {
         Currency currency = createCurrency(currencyRequestDto);
         currency = currencyDao.findCurrency(currency);
@@ -34,8 +37,7 @@ public class CurrencyService {
         );
     }
 
-    private CurrencyService(){
-    }
+
 
     private CurrencyResponseDto buildCurrencyResponseDto (Currency currency) {
         return new CurrencyResponseDto(

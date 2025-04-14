@@ -10,7 +10,7 @@ import java.io.IOException;
 
 
 @WebServlet("/exchangeRates")
-public class AllExchangeRatesServlet extends HttpServlet {
+public class AllRatesServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

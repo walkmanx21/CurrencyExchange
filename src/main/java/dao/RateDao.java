@@ -10,11 +10,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExchangeRateDao {
+public class RateDao {
 
-    public static final ExchangeRateDao INSTANCE = new ExchangeRateDao();
+    public static final RateDao INSTANCE = new RateDao();
 
-    private ExchangeRateDao() {
+    private RateDao() {
     }
 
     private static final String FIND_ALL_EXCHANGE_RATES_SQL = """

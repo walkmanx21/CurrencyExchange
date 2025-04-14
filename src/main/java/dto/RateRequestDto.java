@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class ExchangeRateRequestDto {
+public class RateRequestDto {
     private final String baseCurrencyCode;
     private final String targetCurrencyCode;
 }
