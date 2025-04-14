@@ -1,6 +1,7 @@
 package rate.servlet;
 
 import com.google.gson.Gson;
+import exception.ExchangeRateNotFoundException;
 import rate.dto.RateRequestDto;
 import rate.dto.RateResponseDto;
 import jakarta.servlet.ServletException;
@@ -32,7 +33,14 @@ public class OneRateServlet extends HttpServlet {
         String baseCurrencyCode = servletPathInfo.substring(1, 4).toUpperCase();
         String targetCurrencyCode = servletPathInfo.substring(4, 7).toUpperCase();
         RateRequestDto rateRequestDto = new RateRequestDto(baseCurrencyCode, targetCurrencyCode);
-        RateResponseDto rateResponseDto = rateService.findOneExchangeRate(rateRequestDto);
+        RateResponseDto rateResponseDto = null;
+
+        try {
+            rateResponseDto = rateService.findOneExchangeRate(rateRequestDto);
+        } catch (ExchangeRateNotFoundException e) {
+            ResponsePrintWriter.printResponse(resp, 404, "Обменный курс для пары не найден");
+        }
+
         String currencyJsonString = new Gson().toJson(rateResponseDto);
         ResponsePrintWriter.printResponse(resp, 200, currencyJsonString);
 

@@ -30,6 +30,7 @@ public class OneCurrencyServlet extends HttpServlet {
             return;
         }
 
+
         if (servletPathInfo.length() == 4) {
             String currencyCode = servletPathInfo.substring(1, 4).toUpperCase();
             CurrencyRequestDto currencyRequestDto = new CurrencyRequestDto(currencyCode);

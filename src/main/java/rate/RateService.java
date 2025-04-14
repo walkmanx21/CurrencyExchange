@@ -3,6 +3,7 @@ package rate;
 import currency.CurrencyService;
 import currency.dto.CurrencyRequestDto;
 import currency.dto.CurrencyResponseDto;
+import exception.ExchangeRateNotFoundException;
 import rate.dto.RateRequestDto;
 import rate.dto.RateResponseDto;
 
@@ -17,11 +18,15 @@ public class RateService {
     private RateService() {
     }
 
-    public RateResponseDto findOneExchangeRate(RateRequestDto rateRequestDto) {
+    public RateResponseDto findOneExchangeRate(RateRequestDto rateRequestDto) throws ExchangeRateNotFoundException {
         Rate rate = buildPreRate(rateRequestDto);
         rate = rateDao.findOneRate(rate);
         buildFinalRate(rate);
-        return buildResponseDto(rate);
+        RateResponseDto rateResponseDto = buildResponseDto(rate);
+        if (rateResponseDto.getBaseCurrency() == null || rateResponseDto.getTargetCurrency() == null) {
+            throw new ExchangeRateNotFoundException();
+        }
+        return rateResponseDto;
     }
 
     public RateResponseDto findAllExchangeRate(RateRequestDto rateRequestDto) {
