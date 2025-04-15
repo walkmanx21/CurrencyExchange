@@ -9,6 +9,7 @@ import exception.ExchangeRateNotFoundException;
 import rate.dto.RateRequestDto;
 import rate.dto.RateResponseDto;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +48,13 @@ public class RateService {
     public RateResponseDto insertNewExchangeRate(RateRequestDto rateRequestDto) throws CurrencyNotFoundException, ExchangeRateAlreadyExistsException {
         Rate rate = buildPreRate(rateRequestDto);
         rate = rateDao.insertNewExchangeRate(rate);
+        buildFinalRate(rate);
+        return buildResponseDto(rate);
+    }
+
+    public RateResponseDto updateExchangeRate (RateRequestDto rateRequestDto) throws ExchangeRateNotFoundException {
+        Rate rate = buildPreRate(rateRequestDto);
+        rate = rateDao.updateExchangeRate(rate);
         buildFinalRate(rate);
         return buildResponseDto(rate);
     }

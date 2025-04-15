@@ -1,6 +1,8 @@
 package rate.servlet;
 
 import com.google.gson.Gson;
+import exception.CurrencyNotFoundException;
+import exception.ExchangeRateAlreadyExistsException;
 import exception.ExchangeRateNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +17,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import rate.RateService;
 import util.ResponsePrintWriter;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 
 
@@ -31,13 +35,26 @@ public class OneRateServlet extends HttpServlet {
             ResponsePrintWriter.printResponse(resp, 400, "Коды валют пары отсутствуют в адресе");
             return;
         }
-        String rateString = req.getParameter("rate");
-        if (rateString.contains(",")) {
-            rateString = rateString.replace(',', '.');
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(req.getInputStream()));
+        String rateString = br.readLine();
+        rateString = rateString.replace("rate=", "");
+        if (rateString.isEmpty()) {
+            ResponsePrintWriter.printResponse(resp, 400, "Отсутствует нужное поле формы");
+            return;
+        }
+        if (rateString.contains("%2C")) {
+            rateString = rateString.replace("%2C", ".");
         }
         BigDecimal rate =  new BigDecimal(rateString);
         RateRequestDto rateRequestDto = new RateRequestDto(pathInfo.getBaseCurrencyCode(), pathInfo.getTargetCurrencyCode(), rate);
-
+        try {
+            RateResponseDto rateResponseDto = rateService.updateExchangeRate(rateRequestDto);
+            String rateJsonString = new Gson().toJson(rateResponseDto);
+            ResponsePrintWriter.printResponse(resp, 200, rateJsonString);
+        } catch (ExchangeRateNotFoundException e) {
+            ResponsePrintWriter.printResponse(resp, 404, "Валютная пара отсутствует в базе данных");
+        }
     }
 
     @Override

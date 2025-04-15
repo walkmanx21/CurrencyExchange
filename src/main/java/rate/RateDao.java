@@ -3,6 +3,7 @@ package rate;
 import exception.CurrencyAlreadyExistsException;
 import exception.CurrencyNotFoundException;
 import exception.ExchangeRateAlreadyExistsException;
+import exception.ExchangeRateNotFoundException;
 import util.ConnectionManager;
 
 import java.sql.*;
@@ -117,26 +118,20 @@ public class RateDao {
         }
     }
 
-    public Rate updateExchangeRate (Rate rate) {
+    public Rate updateExchangeRate (Rate rate) throws ExchangeRateNotFoundException {
         try (Connection connection = ConnectionManager.get();
-             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_NEW_EXCHANGE_RATE_SQL, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_EXCHANGE_RATE_SQL)) {
             preparedStatement.setBigDecimal(1, rate.getRate());
             preparedStatement.setString(2, rate.getBaseCurrencyCode());
             preparedStatement.setString(3, rate.getTargetCurrencyCode());
             preparedStatement.executeUpdate();
-            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                rate.setId(generatedKeys.getInt(1));
+            rate = findOneRate(rate);
+            if (rate.getId() == null) {
+                throw new ExchangeRateNotFoundException();
             }
             return rate;
-        } catch (SQLException e) {
-            if (e.getMessage().contains("SQLITE_CONSTRAINT_NOTNULL")) {
-                throw new CurrencyNotFoundException(e);
-            }
-            if (e.getMessage().contains("SQLITE_CONSTRAINT_UNIQUE")) {
-                throw new ExchangeRateAlreadyExistsException(e);
-            }
-            return null;
+        } catch (SQLException | ExchangeRateNotFoundException e) {
+            throw new ExchangeRateNotFoundException();
         }
     }
 
