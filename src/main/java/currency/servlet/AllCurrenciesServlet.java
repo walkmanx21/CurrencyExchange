@@ -3,7 +3,6 @@ package currency.servlet;
 import com.google.gson.Gson;
 import currency.CurrencyDao;
 import currency.dto.CurrencyRequestDto;
-import currency.dto.CurrencyResponseDto;
 import currency.CurrencyService;
 import currency.Currency;
 import exception.CurrencyAlreadyExistsException;

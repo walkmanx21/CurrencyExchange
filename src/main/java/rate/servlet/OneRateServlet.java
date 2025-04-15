@@ -22,7 +22,7 @@ import java.math.BigDecimal;
 @WebServlet("/exchangeRate/*")
 public class OneRateServlet extends HttpServlet {
 
-    private RateService rateService = RateService.getInstance();
+    private final RateService rateService = RateService.getInstance();
 
     @Override
     protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -64,10 +64,9 @@ public class OneRateServlet extends HttpServlet {
 
     @Getter
     @AllArgsConstructor
-    static
-    class PathInfo {
-        String baseCurrencyCode;
-        String targetCurrencyCode;
+    private static class PathInfo {
+        private String baseCurrencyCode;
+        private String targetCurrencyCode;
     }
 
     private PathInfo getPathInfo (HttpServletRequest req) {

@@ -41,7 +41,7 @@ public class RateDao {
             WHERE baseCurrencyCode = ? AND targetCurrencyCode = ?;
             """;
 
-    public static final String INSERT_NEW_EXCHANGE_RATE_SQL = """
+    private static final String INSERT_NEW_EXCHANGE_RATE_SQL = """
             INSERT INTO ExchangeRates (BaseCurrencyId, TargetCurrencyId, Rate)
             VALUES (
                     (SELECT id
@@ -52,6 +52,17 @@ public class RateDao {
                      WHERE Code = ?),
                     ?
                    );
+            """;
+
+    public static final String UPDATE_EXCHANGE_RATE_SQL = """
+            UPDATE ExchangeRates
+            SET Rate = ?
+            WHERE BaseCurrencyId = (SELECT id
+                                    FROM Currencies
+                                    WHERE Code = ?)
+              AND TargetCurrencyId = (SELECT id
+                                      FROM Currencies
+                                      WHERE Code = ?)
             """;
 
     public List<Rate> findAllRates() {
@@ -89,6 +100,29 @@ public class RateDao {
             preparedStatement.setString(1, rate.getBaseCurrencyCode());
             preparedStatement.setString(2, rate.getTargetCurrencyCode());
             preparedStatement.setBigDecimal(3, rate.getRate());
+            preparedStatement.executeUpdate();
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                rate.setId(generatedKeys.getInt(1));
+            }
+            return rate;
+        } catch (SQLException e) {
+            if (e.getMessage().contains("SQLITE_CONSTRAINT_NOTNULL")) {
+                throw new CurrencyNotFoundException(e);
+            }
+            if (e.getMessage().contains("SQLITE_CONSTRAINT_UNIQUE")) {
+                throw new ExchangeRateAlreadyExistsException(e);
+            }
+            return null;
+        }
+    }
+
+    public Rate updateExchangeRate (Rate rate) {
+        try (Connection connection = ConnectionManager.get();
+             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_NEW_EXCHANGE_RATE_SQL, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setBigDecimal(1, rate.getRate());
+            preparedStatement.setString(2, rate.getBaseCurrencyCode());
+            preparedStatement.setString(3, rate.getTargetCurrencyCode());
             preparedStatement.executeUpdate();
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {

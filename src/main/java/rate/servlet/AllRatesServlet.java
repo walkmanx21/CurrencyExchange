@@ -8,12 +8,10 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import rate.Rate;
 import rate.RateService;
 import rate.dto.RateRequestDto;
 import rate.dto.RateResponseDto;
 import util.ResponsePrintWriter;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
