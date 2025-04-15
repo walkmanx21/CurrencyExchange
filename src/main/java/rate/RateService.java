@@ -2,14 +2,12 @@ package rate;
 
 import currency.CurrencyService;
 import currency.dto.CurrencyRequestDto;
-import currency.dto.CurrencyResponseDto;
 import exception.CurrencyNotFoundException;
 import exception.ExchangeRateAlreadyExistsException;
 import exception.ExchangeRateNotFoundException;
 import rate.dto.RateRequestDto;
 import rate.dto.RateResponseDto;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 

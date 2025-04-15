@@ -1,8 +1,6 @@
 package rate.servlet;
 
 import com.google.gson.Gson;
-import exception.CurrencyNotFoundException;
-import exception.ExchangeRateAlreadyExistsException;
 import exception.ExchangeRateNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +21,7 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 
 
-@WebServlet("/exchangeRate/*")
+@WebServlet("/rate/*")
 public class OneRateServlet extends HttpServlet {
 
     private final RateService rateService = RateService.getInstance();

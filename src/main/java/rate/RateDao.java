@@ -1,6 +1,5 @@
 package rate;
 
-import exception.CurrencyAlreadyExistsException;
 import exception.CurrencyNotFoundException;
 import exception.ExchangeRateAlreadyExistsException;
 import exception.ExchangeRateNotFoundException;
