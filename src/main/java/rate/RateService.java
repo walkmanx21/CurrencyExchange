@@ -42,6 +42,12 @@ public class RateService {
         return responseDtoList;
     }
 
+    public RateResponseDto insertNewExchangeRate(RateRequestDto rateRequestDto) {
+        Rate rate = buildPreRate(rateRequestDto);
+        rate =rateDao.insertNewExchangeRate(rate);
+        return null;
+    }
+
     private Rate buildPreRate(RateRequestDto rateRequestDto) {
         return new Rate(
                 null,
@@ -49,7 +55,7 @@ public class RateService {
                 null,
                 rateRequestDto.getTargetCurrencyCode(),
                 null,
-                null
+                rateRequestDto.getRate()
         );
     }
 
