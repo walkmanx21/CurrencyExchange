@@ -1,5 +1,8 @@
-package currencyExchange;
+package currencyExchange.servlet;
 
+import currencyExchange.CurrencyExchangeService;
+import currencyExchange.dto.ExchangeRequestDto;
+import currencyExchange.dto.ExchangeResponseDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,13 +15,15 @@ import java.math.BigDecimal;
 @WebServlet("/exchange")
 public class CurrencyExchangeServlet extends HttpServlet {
 
+    private final CurrencyExchangeService currencyExchangeService = CurrencyExchangeService.getInstance();
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String baseCurrencyCode = req.getParameter("from");
         String targetCurrencyCode = req.getParameter("to");
         BigDecimal amount = new BigDecimal(req.getParameter("amount"));
         ExchangeRequestDto exchangeRequestDto = new ExchangeRequestDto(baseCurrencyCode, targetCurrencyCode, amount);
-
+        ExchangeResponseDto exchangeResponseDto = currencyExchangeService.makeCurrencyExchange(exchangeRequestDto);
 
 
     }

@@ -1,4 +1,4 @@
-package currencyExchange;
+package currencyExchange.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
