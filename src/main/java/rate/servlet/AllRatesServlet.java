@@ -1,6 +1,8 @@
 package rate.servlet;
 
 import com.google.gson.Gson;
+import exception.CurrencyNotFoundException;
+import exception.ExchangeRateAlreadyExistsException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -31,12 +33,18 @@ public class AllRatesServlet extends HttpServlet {
             rateString = rateString.replace(',', '.');
         }
         BigDecimal rate =  new BigDecimal(rateString);
-
         RateRequestDto rateRequestDto = new RateRequestDto(baseCurrencyCode, targetCurrencyCode, rate);
-        RateResponseDto rateResponseDto = rateService.insertNewExchangeRate(rateRequestDto);
+        try {
+            RateResponseDto rateResponseDto = rateService.insertNewExchangeRate(rateRequestDto);
+            String rateJsonString = new Gson().toJson(rateResponseDto);
+            ResponsePrintWriter.printResponse(resp, 201, rateJsonString);
+        } catch (CurrencyNotFoundException e) {
+            ResponsePrintWriter.printResponse(resp, 404, "Одна (или обе) из указанных валют не существует в БД");
+        } catch (ExchangeRateAlreadyExistsException e) {
+            ResponsePrintWriter.printResponse(resp, 409, "Валютная пара с таким кодом уже существует");
+        }
 
 
-        System.out.println();
     }
 
     @Override

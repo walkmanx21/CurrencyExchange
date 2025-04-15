@@ -3,6 +3,8 @@ package rate;
 import currency.CurrencyService;
 import currency.dto.CurrencyRequestDto;
 import currency.dto.CurrencyResponseDto;
+import exception.CurrencyNotFoundException;
+import exception.ExchangeRateAlreadyExistsException;
 import exception.ExchangeRateNotFoundException;
 import rate.dto.RateRequestDto;
 import rate.dto.RateResponseDto;
@@ -42,10 +44,11 @@ public class RateService {
         return responseDtoList;
     }
 
-    public RateResponseDto insertNewExchangeRate(RateRequestDto rateRequestDto) {
+    public RateResponseDto insertNewExchangeRate(RateRequestDto rateRequestDto) throws CurrencyNotFoundException, ExchangeRateAlreadyExistsException {
         Rate rate = buildPreRate(rateRequestDto);
-        rate =rateDao.insertNewExchangeRate(rate);
-        return null;
+        rate = rateDao.insertNewExchangeRate(rate);
+        buildFinalRate(rate);
+        return buildResponseDto(rate);
     }
 
     private Rate buildPreRate(RateRequestDto rateRequestDto) {
