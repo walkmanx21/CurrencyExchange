@@ -1,5 +1,6 @@
 package currencyExchange.servlet;
 
+import com.google.gson.Gson;
 import currencyExchange.CurrencyExchangeService;
 import currencyExchange.dto.ExchangeRequestDto;
 import currencyExchange.dto.ExchangeResponseDto;
@@ -8,6 +9,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import util.ResponsePrintWriter;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -21,10 +23,16 @@ public class CurrencyExchangeServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String baseCurrencyCode = req.getParameter("from");
         String targetCurrencyCode = req.getParameter("to");
-        BigDecimal amount = new BigDecimal(req.getParameter("amount"));
+        String amountString = req.getParameter("amount");
+        if (amountString.contains(",")) {
+            amountString = amountString.replace(',', '.');
+        }
+        BigDecimal amount = new BigDecimal(amountString);
+
         ExchangeRequestDto exchangeRequestDto = new ExchangeRequestDto(baseCurrencyCode, targetCurrencyCode, amount);
         ExchangeResponseDto exchangeResponseDto = currencyExchangeService.makeCurrencyExchange(exchangeRequestDto);
-
+        String exchangeRateJsonString = new Gson().toJson(exchangeResponseDto);
+        ResponsePrintWriter.printResponse(resp, 200, exchangeRateJsonString);
 
     }
 }

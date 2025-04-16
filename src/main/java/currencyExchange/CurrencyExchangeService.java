@@ -8,6 +8,7 @@ import rate.Rate;
 import rate.RateDao;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class CurrencyExchangeService {
     private static final CurrencyExchangeService INSTANCE = new CurrencyExchangeService();
@@ -22,19 +23,24 @@ public class CurrencyExchangeService {
     }
 
     public ExchangeResponseDto makeCurrencyExchange (ExchangeRequestDto exchangeRequestDto) {
-        Exchange exchange = buildPreExchange(exchangeRequestDto);
-        String currencyCode1 = exchange.getBaseCurrencyCode();
-        String currencyCode2 = exchange.getTargetCurrencyCode();
+                String currencyCode1 = exchangeRequestDto.getBaseCurrencyCode();
+        String currencyCode2 = exchangeRequestDto.getTargetCurrencyCode();
         if (checkExRateInDatabase(currencyCode1, currencyCode2)) {
+            Exchange exchange = buildPreExchange(exchangeRequestDto);
             buildPreFinalExchange(exchange,currencyCode1, currencyCode2);
             BigDecimal convertedAmount = exchange.getRate().multiply(exchange.getAmount());
             exchange.setConvertedAmount(convertedAmount);
+            return buildExchangeResponseDto(exchange);
         }
         if (checkExRateInDatabase(currencyCode2, currencyCode1)) {
+            Exchange exchange = buildPreExchange(exchangeRequestDto);
             buildPreFinalExchange(exchange,currencyCode2, currencyCode1);
-            BigDecimal convertedAmount = (BigDecimal)1
-            exchange.setConvertedAmount(convertedAmount);
-            System.out.println(exchange);
+            BigDecimal convertedAmount = (new BigDecimal("1.000000")).
+                    divide(exchange.getRate(), RoundingMode.FLOOR).
+                    multiply(exchange.getAmount());
+            convertedAmount = convertedAmount.setScale(2, RoundingMode.FLOOR);
+            exchange.setConvertedAmount(finalConvertedAmount);
+            return buildExchangeResponseDto(exchange);
         }
 
 
@@ -71,5 +77,15 @@ public class CurrencyExchangeService {
         exchange.setBaseCurrency(currencyService.findOneCurrency(currencyRequestDto1));
         exchange.setTargetCurrency(currencyService.findOneCurrency(currencyRequestDto2));
         return exchange;
+    }
+
+    private ExchangeResponseDto buildExchangeResponseDto (Exchange exchange) {
+        return new ExchangeResponseDto(
+                exchange.getBaseCurrency(),
+                exchange.getTargetCurrency(),
+                exchange.getRate(),
+                exchange.getAmount(),
+                exchange.getConvertedAmount()
+        );
     }
 }
