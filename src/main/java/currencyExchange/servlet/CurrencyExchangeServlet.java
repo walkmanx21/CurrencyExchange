@@ -31,8 +31,11 @@ public class CurrencyExchangeServlet extends HttpServlet {
 
         ExchangeRequestDto exchangeRequestDto = new ExchangeRequestDto(baseCurrencyCode, targetCurrencyCode, amount);
         ExchangeResponseDto exchangeResponseDto = currencyExchangeService.makeCurrencyExchange(exchangeRequestDto);
-        String exchangeRateJsonString = new Gson().toJson(exchangeResponseDto);
-        ResponsePrintWriter.printResponse(resp, 200, exchangeRateJsonString);
-
+        if (exchangeResponseDto.getRate() == null) {
+            ResponsePrintWriter.printResponse(resp, 404, "Валюта не найдена");
+        } else {
+            String exchangeRateJsonString = new Gson().toJson(exchangeResponseDto);
+            ResponsePrintWriter.printResponse(resp, 200, exchangeRateJsonString);
+        }
     }
 }

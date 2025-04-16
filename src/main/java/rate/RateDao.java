@@ -1,10 +1,12 @@
 package rate;
 
+import currencyExchange.Exchange;
 import exception.CurrencyNotFoundException;
 import exception.ExchangeRateAlreadyExistsException;
 import exception.ExchangeRateNotFoundException;
 import util.ConnectionManager;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +56,7 @@ public class RateDao {
                    );
             """;
 
-    public static final String UPDATE_EXCHANGE_RATE_SQL = """
+    private static final String UPDATE_EXCHANGE_RATE_SQL = """
             UPDATE ExchangeRates
             SET Rate = ?
             WHERE BaseCurrencyId = (SELECT id
@@ -64,6 +66,7 @@ public class RateDao {
                                       FROM Currencies
                                       WHERE Code = ?)
             """;
+
 
     public List<Rate> findAllRates() {
         try (Connection connection = ConnectionManager.get();
@@ -133,7 +136,6 @@ public class RateDao {
             throw new ExchangeRateNotFoundException();
         }
     }
-
 
     private static Rate buildRate (ResultSet resultSet) throws SQLException {
         return new Rate(
