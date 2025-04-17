@@ -16,7 +16,6 @@ import java.math.BigDecimal;
 
 @WebServlet("/exchange")
 public class CurrencyExchangeServlet extends HttpServlet {
-
     private final CurrencyExchangeService currencyExchangeService = CurrencyExchangeService.getInstance();
 
     @Override
@@ -24,6 +23,15 @@ public class CurrencyExchangeServlet extends HttpServlet {
         String baseCurrencyCode = req.getParameter("from");
         String targetCurrencyCode = req.getParameter("to");
         String amountString = req.getParameter("amount");
+
+        boolean baseCurrencyCodeIsEmpty = baseCurrencyCode == null || baseCurrencyCode.isEmpty();
+        boolean targetCurrencyCodeIsEmpty = targetCurrencyCode == null || targetCurrencyCode.isEmpty();
+        boolean amountStringIsEmpty = amountString == null || amountString.isEmpty();
+
+        if (baseCurrencyCodeIsEmpty || targetCurrencyCodeIsEmpty || amountStringIsEmpty) {
+            ResponsePrintWriter.printResponse(resp, 400, "Отсутствует нужное поле формы");
+        }
+
         if (amountString.contains(",")) {
             amountString = amountString.replace(',', '.');
         }

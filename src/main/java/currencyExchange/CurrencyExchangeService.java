@@ -10,7 +10,6 @@ import java.math.RoundingMode;
 
 public class CurrencyExchangeService {
     private static final CurrencyExchangeService INSTANCE = new CurrencyExchangeService();
-    private final RateDao rateDao = RateDao.getInstance();
     private final ExchangeDao exchangeDao = ExchangeDao.getInstance();
 
     private CurrencyExchangeService(){
