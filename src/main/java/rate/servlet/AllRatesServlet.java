@@ -1,6 +1,7 @@
 package rate.servlet;
 
 import com.google.gson.Gson;
+import exception.AnyErrorException;
 import exception.CurrencyNotFoundException;
 import exception.ExchangeRateAlreadyExistsException;
 import jakarta.servlet.ServletException;
@@ -49,6 +50,8 @@ public class AllRatesServlet extends HttpServlet {
             ResponsePrintWriter.printResponse(resp, 404, "Одна (или обе) из указанных валют не существует в БД");
         } catch (ExchangeRateAlreadyExistsException e) {
             ResponsePrintWriter.printResponse(resp, 409, "Валютная пара с таким кодом уже существует");
+        } catch (AnyErrorException e) {
+            ResponsePrintWriter.printResponse(resp, 500, "Ошибка");
         }
 
 
@@ -56,7 +59,12 @@ public class AllRatesServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<RateResponseDto> rates = rateService.findAllExchangeRate();
+        List<RateResponseDto> rates = null;
+        try {
+            rates = rateService.findAllExchangeRate();
+        } catch (AnyErrorException e) {
+            ResponsePrintWriter.printResponse(resp, 500, "Ошибка");
+        }
         String ratesJsonString = new Gson().toJson(rates);
 
         ResponsePrintWriter.printResponse(resp, 200, ratesJsonString);

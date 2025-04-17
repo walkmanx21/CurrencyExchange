@@ -5,6 +5,7 @@ import currency.CurrencyDao;
 import currency.dto.CurrencyRequestDto;
 import currency.CurrencyService;
 import currency.Currency;
+import exception.AnyErrorException;
 import exception.CurrencyAlreadyExistsException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -42,6 +43,8 @@ public class AllCurrenciesServlet extends HttpServlet {
             currency = currencyService.insertCurrency(currencyRequestDto);
         } catch (CurrencyAlreadyExistsException e) {
             ResponsePrintWriter.printResponse(resp, 409, "Валюта с указанным кодом уже существует");
+        } catch (Throwable throwable) {
+            ResponsePrintWriter.printResponse(resp, 500, "Ошибка");
         }
         String currencyJsonString = new Gson().toJson(currency);
         ResponsePrintWriter.printResponse(resp, 201, currencyJsonString);
@@ -50,7 +53,12 @@ public class AllCurrenciesServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<Currency> currencies = currencyDao.findAllCurrencies();
+        List<Currency> currencies = null;
+        try {
+            currencies = currencyDao.findAllCurrencies();
+        } catch (AnyErrorException e) {
+            ResponsePrintWriter.printResponse(resp, 500, "Ошибка");
+        }
         String currenciesJsonString = new Gson().toJson(currencies);
         ResponsePrintWriter.printResponse(resp, 200, currenciesJsonString);
     }

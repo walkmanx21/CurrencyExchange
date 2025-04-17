@@ -1,8 +1,7 @@
 package currencyExchange;
 
 import currency.Currency;
-import currencyExchange.dto.ExchangeRequestDto;
-import rate.Rate;
+import exception.AnyErrorException;
 import util.ConnectionManager;
 
 import java.math.BigDecimal;
@@ -50,23 +49,23 @@ public class ExchangeDao {
             WHERE baseCurrencyCode = ? AND targetCurrencyCode = ?;
             """;
 
-    public BigDecimal getOnlyRateField (String baseCurrencyCode, String targetCurrencyCode) {
+    public BigDecimal getOnlyRateField (String baseCurrencyCode, String targetCurrencyCode) throws AnyErrorException {
+        BigDecimal rate = null;
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ONLY_RATE_FIELD)) {
             preparedStatement.setString(1, baseCurrencyCode);
             preparedStatement.setString(2, targetCurrencyCode);
             ResultSet resultSet = preparedStatement.executeQuery();
-            BigDecimal rate = null;
             if (resultSet.next()) {
                 rate = resultSet.getBigDecimal(1);
             }
-            return rate;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (Throwable throwable) {
+            throw new AnyErrorException();
         }
+        return rate;
     }
 
-    public Currency findCurrency (String code) {
+    public Currency findCurrency (String code) throws AnyErrorException {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_CURRENCY_BY_CODE_SQL)) {
             preparedStatement.setString(1, code);
@@ -76,12 +75,12 @@ public class ExchangeDao {
                 currencyFull = buildCurrency(resultSet);
             }
             return currencyFull;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (Throwable throwable) {
+            throw new AnyErrorException();
         }
     }
 
-    public int findOneRate(String baseCurrencyCode, String targetCurrencyCode) {
+    public int findOneRate(String baseCurrencyCode, String targetCurrencyCode) throws AnyErrorException {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_ONE_EXCHANGE_RATE_SQL)) {
             preparedStatement.setString(1, baseCurrencyCode);
@@ -92,8 +91,8 @@ public class ExchangeDao {
                 rateId = resultSet.getInt("exchangeRate_id");
             }
             return rateId;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (Throwable throwable) {
+            throw new AnyErrorException();
         }
     }
 

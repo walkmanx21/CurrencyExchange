@@ -2,6 +2,7 @@ package currency;
 
 import currency.dto.CurrencyRequestDto;
 import currency.dto.CurrencyResponseDto;
+import exception.AnyErrorException;
 import exception.CurrencyAlreadyExistsException;
 
 public class CurrencyService {
@@ -15,12 +16,12 @@ public class CurrencyService {
     private CurrencyService(){
     }
 
-    public Currency findOneCurrency (CurrencyRequestDto currencyRequestDto) {
+    public Currency findOneCurrency (CurrencyRequestDto currencyRequestDto) throws AnyErrorException {
         Currency currency = createCurrency(currencyRequestDto);
         return currencyDao.findCurrency(currency);
     }
 
-    public Currency insertCurrency (CurrencyRequestDto currencyRequestDto) throws CurrencyAlreadyExistsException {
+    public Currency insertCurrency (CurrencyRequestDto currencyRequestDto) throws CurrencyAlreadyExistsException, AnyErrorException {
         Currency currency = createCurrency(currencyRequestDto);
         return currencyDao.insertNewCurrency(currency);
     }

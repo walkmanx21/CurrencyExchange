@@ -1,12 +1,12 @@
 package rate;
 
-import currencyExchange.Exchange;
+import currency.Currency;
+import exception.AnyErrorException;
 import exception.CurrencyNotFoundException;
 import exception.ExchangeRateAlreadyExistsException;
 import exception.ExchangeRateNotFoundException;
 import util.ConnectionManager;
 
-import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,8 +67,14 @@ public class RateDao {
                                       WHERE Code = ?)
             """;
 
+    private static final String FIND_CURRENCY_BY_CODE_SQL = """
+            SELECT ID, Code, FullName, Sign
+            FROM Currencies
+            WHERE Code = ?
+            """;
 
-    public List<Rate> findAllRates() {
+
+    public List<Rate> findAllRates() throws AnyErrorException {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_EXCHANGE_RATES_SQL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -79,10 +85,12 @@ public class RateDao {
             return rates;
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } catch (Throwable throwable) {
+            throw new AnyErrorException();
         }
     }
 
-    public Rate findOneRate(Rate rate) {
+    public Rate findOneRate(Rate rate) throws AnyErrorException {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_ONE_EXCHANGE_RATE_SQL)) {
             preparedStatement.setString(1, rate.getBaseCurrencyCode());
@@ -94,10 +102,12 @@ public class RateDao {
             return rate;
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } catch (Throwable throwable) {
+            throw new AnyErrorException();
         }
     }
 
-    public Rate insertNewExchangeRate(Rate rate) throws CurrencyNotFoundException, ExchangeRateAlreadyExistsException {
+    public Rate insertNewExchangeRate(Rate rate) throws CurrencyNotFoundException, ExchangeRateAlreadyExistsException, AnyErrorException {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_NEW_EXCHANGE_RATE_SQL, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, rate.getBaseCurrencyCode());
@@ -118,9 +128,12 @@ public class RateDao {
             }
             return null;
         }
+        catch (Throwable throwable) {
+            throw new AnyErrorException();
+        }
     }
 
-    public Rate updateExchangeRate (Rate rate) throws ExchangeRateNotFoundException {
+    public Rate updateExchangeRate (Rate rate) throws ExchangeRateNotFoundException, AnyErrorException {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_EXCHANGE_RATE_SQL)) {
             preparedStatement.setBigDecimal(1, rate.getRate());
@@ -134,6 +147,22 @@ public class RateDao {
             return rate;
         } catch (SQLException | ExchangeRateNotFoundException e) {
             throw new ExchangeRateNotFoundException();
+        } catch (Throwable throwable) {
+            throw new AnyErrorException();
+        }
+    }
+
+    public void findCurrency (String code) throws AnyErrorException {
+        try (Connection connection = ConnectionManager.get();
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_CURRENCY_BY_CODE_SQL)) {
+            preparedStatement.setString(1, code);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            Currency currencyFull = null;
+            if (resultSet.next()) {
+                currencyFull = buildCurrency(resultSet);
+            }
+        } catch (Throwable throwable) {
+            throw new AnyErrorException();
         }
     }
 
@@ -145,6 +174,15 @@ public class RateDao {
                 resultSet.getString("targetCurrencyCode"),
                 null,
                 resultSet.getBigDecimal("Rate")
+        );
+    }
+
+    private static Currency buildCurrency (ResultSet resultSet) throws SQLException {
+        return new Currency(
+                resultSet.getInt("ID"),
+                resultSet.getString("Code"),
+                resultSet.getString("FullName"),
+                resultSet.getString("Sign")
         );
     }
 

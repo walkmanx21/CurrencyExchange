@@ -5,6 +5,7 @@ import currency.Currency;
 import currency.dto.CurrencyRequestDto;
 import currency.dto.CurrencyResponseDto;
 import currency.CurrencyService;
+import exception.AnyErrorException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -33,7 +34,12 @@ public class OneCurrencyServlet extends HttpServlet {
         if (servletPathInfo.length() == 4) {
             String currencyCode = servletPathInfo.substring(1, 4).toUpperCase();
             CurrencyRequestDto currencyRequestDto = new CurrencyRequestDto(currencyCode);
-            Currency currency = currencyService.findOneCurrency(currencyRequestDto);
+            Currency currency = null;
+            try {
+                currency = currencyService.findOneCurrency(currencyRequestDto);
+            } catch (AnyErrorException e) {
+                ResponsePrintWriter.printResponse(resp, 500, "Ошибка");
+            }
 
             if (currency != null) {
                 String currencyJsonString = new Gson().toJson(currency);

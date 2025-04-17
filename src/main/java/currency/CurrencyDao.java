@@ -1,5 +1,6 @@
 package currency;
 
+import exception.AnyErrorException;
 import exception.CurrencyAlreadyExistsException;
 import util.ConnectionManager;
 
@@ -35,7 +36,7 @@ public class CurrencyDao {
             """;
 
 
-    public List<Currency> findAllCurrencies() {
+    public List<Currency> findAllCurrencies() throws AnyErrorException {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_CURRENCIES_SQL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -44,13 +45,13 @@ public class CurrencyDao {
                 currencies.add(buildCurrency(resultSet));
             }
             return currencies;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (Throwable throwable) {
+            throw new AnyErrorException();
         }
     }
 
 
-    public Currency findCurrency(Currency currency) {
+    public Currency findCurrency(Currency currency) throws AnyErrorException {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_CURRENCY_BY_CODE_SQL)) {
             preparedStatement.setString(1, currency.getCode());
@@ -60,13 +61,13 @@ public class CurrencyDao {
                 currencyFull = buildCurrency(resultSet);
             }
             return currencyFull;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (Throwable throwable) {
+            throw new AnyErrorException();
         }
     }
 
 
-    public Currency insertNewCurrency(Currency currency) throws CurrencyAlreadyExistsException {
+    public Currency insertNewCurrency(Currency currency) throws CurrencyAlreadyExistsException, AnyErrorException {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_NEW_CURRENCY_SQL, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, currency.getCode());
@@ -80,6 +81,8 @@ public class CurrencyDao {
             return currency;
         } catch (SQLException e) {
             throw new CurrencyAlreadyExistsException(e);
+        } catch (Throwable throwable) {
+            throw new AnyErrorException();
         }
     }
 

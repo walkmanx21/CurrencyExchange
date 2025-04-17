@@ -1,9 +1,9 @@
-package currencyExchange.servlet;
+package currencyExchange;
 
 import com.google.gson.Gson;
-import currencyExchange.CurrencyExchangeService;
 import currencyExchange.dto.ExchangeRequestDto;
 import currencyExchange.dto.ExchangeResponseDto;
+import exception.AnyErrorException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -30,7 +30,14 @@ public class CurrencyExchangeServlet extends HttpServlet {
         BigDecimal amount = new BigDecimal(amountString);
 
         ExchangeRequestDto exchangeRequestDto = new ExchangeRequestDto(baseCurrencyCode, targetCurrencyCode, amount);
-        ExchangeResponseDto exchangeResponseDto = currencyExchangeService.makeCurrencyExchange(exchangeRequestDto);
+        ExchangeResponseDto exchangeResponseDto = null;
+
+        try {
+            exchangeResponseDto = currencyExchangeService.makeCurrencyExchange(exchangeRequestDto);
+        } catch (AnyErrorException e) {
+            ResponsePrintWriter.printResponse(resp, 500, "Ошибка");
+        }
+
         if (exchangeResponseDto.getRate() == null) {
             ResponsePrintWriter.printResponse(resp, 404, "Валюта не найдена");
         } else {

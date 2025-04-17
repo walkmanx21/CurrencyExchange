@@ -2,6 +2,7 @@ package currencyExchange;
 
 import currencyExchange.dto.ExchangeRequestDto;
 import currencyExchange.dto.ExchangeResponseDto;
+import exception.AnyErrorException;
 import rate.RateDao;
 
 import java.math.BigDecimal;
@@ -19,7 +20,7 @@ public class CurrencyExchangeService {
         return INSTANCE;
     }
 
-    public ExchangeResponseDto makeCurrencyExchange (ExchangeRequestDto exchangeRequestDto) {
+    public ExchangeResponseDto makeCurrencyExchange (ExchangeRequestDto exchangeRequestDto) throws AnyErrorException {
         Exchange exchange = buildPreExchange(exchangeRequestDto);
         String firstCurrencyCode = exchange.getBaseCurrencyCode();
         String secondCurrencyCode = exchange.getTargetCurrencyCode();
@@ -61,12 +62,12 @@ public class CurrencyExchangeService {
         );
     }
 
-    private boolean checkExRateInDatabase (String baseCurrencyCode, String targetCurrencyCode) {
+    private boolean checkExRateInDatabase (String baseCurrencyCode, String targetCurrencyCode) throws AnyErrorException {
         int rateId = exchangeDao.findOneRate(baseCurrencyCode, targetCurrencyCode);
         return rateId != 0;
     }
 
-    private void buildFinalExchange(Exchange exchange) {
+    private void buildFinalExchange(Exchange exchange) throws AnyErrorException {
         exchange.setBaseCurrency(exchangeDao.findCurrency(exchange.getBaseCurrencyCode()));
         exchange.setTargetCurrency(exchangeDao.findCurrency(exchange.getTargetCurrencyCode()));
     }

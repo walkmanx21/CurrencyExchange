@@ -2,6 +2,7 @@ package rate;
 
 import currency.CurrencyService;
 import currency.dto.CurrencyRequestDto;
+import exception.AnyErrorException;
 import exception.CurrencyNotFoundException;
 import exception.ExchangeRateAlreadyExistsException;
 import exception.ExchangeRateNotFoundException;
@@ -14,7 +15,6 @@ import java.util.List;
 public class RateService {
     private static final RateService INSTANCE = new RateService();
     private final RateDao rateDao = RateDao.getInstance();
-    private final CurrencyService currencyService = CurrencyService.getInstance();
     public static RateService getInstance() {
         return INSTANCE;
     }
@@ -22,7 +22,7 @@ public class RateService {
     private RateService() {
     }
 
-    public RateResponseDto findOneExchangeRate(RateRequestDto rateRequestDto) throws ExchangeRateNotFoundException {
+    public RateResponseDto findOneExchangeRate(RateRequestDto rateRequestDto) throws ExchangeRateNotFoundException, AnyErrorException {
         Rate rate = buildPreRate(rateRequestDto);
         rate = rateDao.findOneRate(rate);
         buildFinalRate(rate);
@@ -33,7 +33,7 @@ public class RateService {
         return rateResponseDto;
     }
 
-    public List<RateResponseDto> findAllExchangeRate() {
+    public List<RateResponseDto> findAllExchangeRate() throws AnyErrorException {
         List<Rate> rates = rateDao.findAllRates();
         List<RateResponseDto> responseDtoList = new ArrayList<>();
         for(Rate rate : rates) {
@@ -43,14 +43,14 @@ public class RateService {
         return responseDtoList;
     }
 
-    public RateResponseDto insertNewExchangeRate(RateRequestDto rateRequestDto) throws CurrencyNotFoundException, ExchangeRateAlreadyExistsException {
+    public RateResponseDto insertNewExchangeRate(RateRequestDto rateRequestDto) throws CurrencyNotFoundException, ExchangeRateAlreadyExistsException, AnyErrorException {
         Rate rate = buildPreRate(rateRequestDto);
         rate = rateDao.insertNewExchangeRate(rate);
         buildFinalRate(rate);
         return buildResponseDto(rate);
     }
 
-    public RateResponseDto updateExchangeRate (RateRequestDto rateRequestDto) throws ExchangeRateNotFoundException {
+    public RateResponseDto updateExchangeRate (RateRequestDto rateRequestDto) throws ExchangeRateNotFoundException, AnyErrorException {
         Rate rate = buildPreRate(rateRequestDto);
         rate = rateDao.updateExchangeRate(rate);
         buildFinalRate(rate);
@@ -68,11 +68,9 @@ public class RateService {
         );
     }
 
-    private void buildFinalRate (Rate rate) {
-        CurrencyRequestDto baseCurrencyDto = new CurrencyRequestDto(rate.getBaseCurrencyCode());
-        CurrencyRequestDto targetCurrencyDto = new CurrencyRequestDto(rate.getTargetCurrencyCode());
-        rate.setBaseCurrency(currencyService.findOneCurrency(baseCurrencyDto));
-        rate.setTargetCurrency(currencyService.findOneCurrency(targetCurrencyDto));
+    private void buildFinalRate (Rate rate) throws AnyErrorException {
+        rateDao.findCurrency(rate.getBaseCurrencyCode());
+        rateDao.findCurrency(rate.getTargetCurrencyCode());
     }
 
     private RateResponseDto buildResponseDto (Rate rate) {

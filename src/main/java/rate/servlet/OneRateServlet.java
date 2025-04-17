@@ -1,6 +1,7 @@
 package rate.servlet;
 
 import com.google.gson.Gson;
+import exception.AnyErrorException;
 import exception.ExchangeRateNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -56,6 +57,8 @@ public class OneRateServlet extends HttpServlet {
             ResponsePrintWriter.printResponse(resp, 200, rateJsonString);
         } catch (ExchangeRateNotFoundException e) {
             ResponsePrintWriter.printResponse(resp, 404, "Валютная пара отсутствует в базе данных");
+        } catch (AnyErrorException e) {
+            ResponsePrintWriter.printResponse(resp, 500, "Ошибка");
         }
     }
 
@@ -74,6 +77,8 @@ public class OneRateServlet extends HttpServlet {
             rateResponseDto = rateService.findOneExchangeRate(rateRequestDto);
         } catch (ExchangeRateNotFoundException e) {
             ResponsePrintWriter.printResponse(resp, 404, "Обменный курс для пары не найден");
+        } catch (AnyErrorException e) {
+            ResponsePrintWriter.printResponse(resp, 500, "Ошибка");
         }
 
         String currencyJsonString = new Gson().toJson(rateResponseDto);
