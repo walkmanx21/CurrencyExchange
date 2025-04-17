@@ -14,6 +14,10 @@ public class CurrencyDao {
     private CurrencyDao() {
     }
 
+    public static CurrencyDao getInstance() {
+        return INSTANCE;
+    }
+
     public static final String FIND_ALL_CURRENCIES_SQL = """
             SELECT id, code, fullname, sign
             FROM Currencies
@@ -26,7 +30,7 @@ public class CurrencyDao {
             """;
 
     public static final String INSERT_NEW_CURRENCY_SQL = """
-            INSERT INTO Currencies (Code, FullName, Sign) 
+            INSERT INTO Currencies (Code, FullName, Sign)
             VALUES (?, ?, ?)
             """;
 
@@ -77,15 +81,6 @@ public class CurrencyDao {
         } catch (SQLException e) {
             throw new CurrencyAlreadyExistsException(e);
         }
-    }
-
-
-    public void update(Object entity) {
-
-    }
-
-    public static CurrencyDao getInstance() {
-        return INSTANCE;
     }
 
     private static Currency buildCurrency (ResultSet resultSet) throws SQLException {

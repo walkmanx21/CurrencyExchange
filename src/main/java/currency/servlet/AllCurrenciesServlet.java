@@ -27,6 +27,15 @@ public class AllCurrenciesServlet extends HttpServlet {
         String fullName = req.getParameter("name");
         String sign = req.getParameter("sign");
 
+        boolean codeIsEmpty = code == null || code.isEmpty();
+        boolean fullNameIsEmpty = fullName == null || fullName.isEmpty();
+        boolean signIsEmpty = sign == null || sign.isEmpty();
+
+        if (codeIsEmpty || fullNameIsEmpty || signIsEmpty) {
+            ResponsePrintWriter.printResponse(resp,400, "Отсутствует нужное поле формы");
+            return;
+        }
+
         CurrencyRequestDto currencyRequestDto = new CurrencyRequestDto(code, fullName, sign);
         Currency currency = null;
         try {

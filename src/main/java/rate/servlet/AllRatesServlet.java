@@ -27,6 +27,15 @@ public class AllRatesServlet extends HttpServlet {
         String baseCurrencyCode = req.getParameter("baseCurrencyCode");
         String targetCurrencyCode = req.getParameter("targetCurrencyCode");
         String rateString = req.getParameter("rate");
+
+        boolean baseCurrencyCodeIsEmpty = baseCurrencyCode == null || baseCurrencyCode.isEmpty();
+        boolean targetCurrencyCodeIsEmpty = targetCurrencyCode == null || targetCurrencyCode.isEmpty();
+        boolean rateStringIsEmpty = rateString == null || rateString.isEmpty();
+
+        if (baseCurrencyCodeIsEmpty || targetCurrencyCodeIsEmpty || rateStringIsEmpty) {
+            ResponsePrintWriter.printResponse(resp, 400, "Отсутствует нужное поле формы");
+        }
+
         if (rateString.contains(",")) {
             rateString = rateString.replace(',', '.');
         }

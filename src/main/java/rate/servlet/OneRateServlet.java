@@ -21,7 +21,7 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 
 
-@WebServlet("/rate/*")
+@WebServlet("/exchangeRate/*")
 public class OneRateServlet extends HttpServlet {
 
     private final RateService rateService = RateService.getInstance();
@@ -36,9 +36,13 @@ public class OneRateServlet extends HttpServlet {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(req.getInputStream()));
         String rateString = br.readLine();
+        if (rateString == null) {
+            ResponsePrintWriter.printResponse(resp, 400, "Отсутствует нужное поле формы");
+            return;
+        }
         rateString = rateString.replace("rate=", "");
         if (rateString.isEmpty()) {
-            ResponsePrintWriter.printResponse(resp, 400, "Отсутствует нужное поле формы");
+            ResponsePrintWriter.printResponse(resp, 400, "Нужное поле формы не заполнено");
             return;
         }
         if (rateString.contains("%2C")) {

@@ -34,8 +34,6 @@ public class CurrencyService {
         );
     }
 
-
-
     private CurrencyResponseDto buildCurrencyResponseDto (Currency currency) {
         return new CurrencyResponseDto(
                 currency.getId(),
