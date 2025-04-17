@@ -4,14 +4,11 @@ import com.google.gson.Gson;
 import currencyExchange.dto.ExchangeRequestDto;
 import currencyExchange.dto.ExchangeResponseDto;
 import exception.AnyErrorException;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import util.ResponsePrintWriter;
-
-import java.io.IOException;
 import java.math.BigDecimal;
 
 @WebServlet("/exchange")
@@ -19,17 +16,27 @@ public class CurrencyExchangeServlet extends HttpServlet {
     private final CurrencyExchangeService currencyExchangeService = CurrencyExchangeService.getInstance();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String baseCurrencyCode = req.getParameter("from");
-        String targetCurrencyCode = req.getParameter("to");
-        String amountString = req.getParameter("amount");
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+        String baseCurrencyCode;
+        String targetCurrencyCode;
+        String amountString;
 
-        boolean baseCurrencyCodeIsEmpty = baseCurrencyCode == null || baseCurrencyCode.isEmpty();
-        boolean targetCurrencyCodeIsEmpty = targetCurrencyCode == null || targetCurrencyCode.isEmpty();
+        try {
+            baseCurrencyCode = req.getParameter("from").toUpperCase();
+            targetCurrencyCode = req.getParameter("to").toUpperCase();
+            amountString = req.getParameter("amount");
+        } catch (Exception e) {
+            ResponsePrintWriter.printResponse(resp, 400, "Поле формы не заполнено");
+            return;
+        }
+
+        boolean baseCurrencyCodeIsEmpty = baseCurrencyCode.isEmpty();
+        boolean targetCurrencyCodeIsEmpty = targetCurrencyCode.isEmpty();
         boolean amountStringIsEmpty = amountString == null || amountString.isEmpty();
 
         if (baseCurrencyCodeIsEmpty || targetCurrencyCodeIsEmpty || amountStringIsEmpty) {
             ResponsePrintWriter.printResponse(resp, 400, "Отсутствует нужное поле формы");
+            return;
         }
 
         if (amountString.contains(",")) {
@@ -38,12 +45,13 @@ public class CurrencyExchangeServlet extends HttpServlet {
         BigDecimal amount = new BigDecimal(amountString);
 
         ExchangeRequestDto exchangeRequestDto = new ExchangeRequestDto(baseCurrencyCode, targetCurrencyCode, amount);
-        ExchangeResponseDto exchangeResponseDto = null;
+        ExchangeResponseDto exchangeResponseDto;
 
         try {
             exchangeResponseDto = currencyExchangeService.makeCurrencyExchange(exchangeRequestDto);
         } catch (AnyErrorException e) {
             ResponsePrintWriter.printResponse(resp, 500, "Ошибка");
+            return;
         }
 
         if (exchangeResponseDto.getRate() == null) {

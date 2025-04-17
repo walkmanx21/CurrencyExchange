@@ -24,6 +24,7 @@ public class AllCurrenciesServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
         String code = req.getParameter("code");
         String fullName = req.getParameter("name");
         String sign = req.getParameter("sign");
@@ -33,7 +34,7 @@ public class AllCurrenciesServlet extends HttpServlet {
         boolean signIsEmpty = sign == null || sign.isEmpty();
 
         if (codeIsEmpty || fullNameIsEmpty || signIsEmpty) {
-            ResponsePrintWriter.printResponse(resp,400, "Отсутствует нужное поле формы");
+            ResponsePrintWriter.printResponse(resp,400, "Поле формы не заполнено");
             return;
         }
 
