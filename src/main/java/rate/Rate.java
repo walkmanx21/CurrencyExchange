@@ -18,12 +18,12 @@ public class Rate {
     private currency.Currency targetCurrency;
     private BigDecimal rate;
 
-    public Rate(String baseCurrencyCode, String targetCurrencyCode) {
+    public Rate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) {
         this.id = null;
         this.baseCurrencyCode = baseCurrencyCode;
         this.baseCurrency = null;
         this.targetCurrencyCode = targetCurrencyCode;
         this.targetCurrency = null;
-        this.rate = null;
+        this.rate = rate;
     }
 }

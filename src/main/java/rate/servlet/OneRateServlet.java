@@ -24,7 +24,6 @@ import java.math.BigDecimal;
 
 @WebServlet("/exchangeRate/*")
 public class OneRateServlet extends HttpServlet {
-
     private final RateService rateService = RateService.getInstance();
 
     @Override
@@ -64,10 +63,9 @@ public class OneRateServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
         PathInfo pathInfo = getPathInfo(req);
         if (pathInfo == null) {
-            ResponsePrintWriter.printResponse(resp, 400, "Коды валют пары отсутствуют в адресе");
+            ResponsePrintWriter.printResponse(resp, 400, "Коды пары валют отсутствуют в адресе");
             return;
         }
         RateRequestDto rateRequestDto = new RateRequestDto(pathInfo.getBaseCurrencyCode(), pathInfo.getTargetCurrencyCode());
@@ -86,13 +84,6 @@ public class OneRateServlet extends HttpServlet {
 
     }
 
-    @Getter
-    @AllArgsConstructor
-    private static class PathInfo {
-        private String baseCurrencyCode;
-        private String targetCurrencyCode;
-    }
-
     private PathInfo getPathInfo (HttpServletRequest req) {
         String servletPathInfo = req.getPathInfo();
         boolean noCurrenciesCode = servletPathInfo.length() == 1;
@@ -103,6 +94,13 @@ public class OneRateServlet extends HttpServlet {
         String targetCurrencyCode = servletPathInfo.substring(4, 7).toUpperCase();
         return new PathInfo(baseCurrencyCode, targetCurrencyCode);
 
+    }
+
+    @Getter
+    @AllArgsConstructor
+    private static class PathInfo {
+        private String baseCurrencyCode;
+        private String targetCurrencyCode;
     }
 
 }

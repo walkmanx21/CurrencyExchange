@@ -152,7 +152,7 @@ public class RateDao {
         }
     }
 
-    public void findCurrency (String code) throws AnyErrorException {
+    public Currency findCurrency (String code) throws AnyErrorException {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_CURRENCY_BY_CODE_SQL)) {
             preparedStatement.setString(1, code);
@@ -161,6 +161,7 @@ public class RateDao {
             if (resultSet.next()) {
                 currencyFull = buildCurrency(resultSet);
             }
+            return currencyFull;
         } catch (Throwable throwable) {
             throw new AnyErrorException();
         }

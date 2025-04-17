@@ -59,18 +59,15 @@ public class RateService {
 
     private Rate buildPreRate(RateRequestDto rateRequestDto) {
         return new Rate(
-                null,
                 rateRequestDto.getBaseCurrencyCode(),
-                null,
                 rateRequestDto.getTargetCurrencyCode(),
-                null,
                 rateRequestDto.getRate()
         );
     }
 
     private void buildFinalRate (Rate rate) throws AnyErrorException {
-        rateDao.findCurrency(rate.getBaseCurrencyCode());
-        rateDao.findCurrency(rate.getTargetCurrencyCode());
+        rate.setBaseCurrency(rateDao.findCurrency(rate.getBaseCurrencyCode()));
+        rate.setTargetCurrency(rateDao.findCurrency(rate.getTargetCurrencyCode()));
     }
 
     private RateResponseDto buildResponseDto (Rate rate) {

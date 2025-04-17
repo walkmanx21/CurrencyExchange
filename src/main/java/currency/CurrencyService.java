@@ -17,30 +17,21 @@ public class CurrencyService {
     }
 
     public Currency findOneCurrency (CurrencyRequestDto currencyRequestDto) throws AnyErrorException {
-        Currency currency = createCurrency(currencyRequestDto);
+        Currency currency = buildCurrency(currencyRequestDto);
         return currencyDao.findCurrency(currency);
     }
 
     public Currency insertCurrency (CurrencyRequestDto currencyRequestDto) throws CurrencyAlreadyExistsException, AnyErrorException {
-        Currency currency = createCurrency(currencyRequestDto);
+        Currency currency = buildCurrency(currencyRequestDto);
         return currencyDao.insertNewCurrency(currency);
     }
 
-    private Currency createCurrency (CurrencyRequestDto currencyRequestDto) {
+    private Currency buildCurrency(CurrencyRequestDto currencyRequestDto) {
         return new Currency(
-                null,
                 currencyRequestDto.getCode(),
                 currencyRequestDto.getFullName(),
                 currencyRequestDto.getSign()
         );
     }
 
-    private CurrencyResponseDto buildCurrencyResponseDto (Currency currency) {
-        return new CurrencyResponseDto(
-                currency.getId(),
-                currency.getCode(),
-                currency.getFullName(),
-                currency.getSign()
-        );
-    }
 }
