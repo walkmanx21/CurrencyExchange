@@ -8,6 +8,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import util.CheckDecimalSeparator;
 import util.ResponsePrintWriter;
 import java.math.BigDecimal;
 
@@ -39,9 +40,8 @@ public class CurrencyExchangeServlet extends HttpServlet {
             return;
         }
 
-        if (amountString.contains(",")) {
-            amountString = amountString.replace(',', '.');
-        }
+        amountString = CheckDecimalSeparator.correction(amountString);
+
         BigDecimal amount = new BigDecimal(amountString);
 
         ExchangeRequestDto exchangeRequestDto = new ExchangeRequestDto(baseCurrencyCode, targetCurrencyCode, amount);

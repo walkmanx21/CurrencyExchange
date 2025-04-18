@@ -42,26 +42,25 @@ public class AllCurrenciesServlet extends HttpServlet {
         Currency currency = null;
         try {
             currency = currencyService.insertCurrency(currencyRequestDto);
+            String currencyJsonString = new Gson().toJson(currency);
+            ResponsePrintWriter.printResponse(resp, 201, currencyJsonString);
         } catch (CurrencyAlreadyExistsException e) {
             ResponsePrintWriter.printResponse(resp, 409, "Валюта с указанным кодом уже существует");
         } catch (Throwable throwable) {
             ResponsePrintWriter.printResponse(resp, 500, "Ошибка");
         }
-        String currencyJsonString = new Gson().toJson(currency);
-        ResponsePrintWriter.printResponse(resp, 201, currencyJsonString);
-
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<Currency> currencies = null;
+        List<Currency> currencies;
         try {
             currencies = currencyDao.findAllCurrencies();
+            String currenciesJsonString = new Gson().toJson(currencies);
+            ResponsePrintWriter.printResponse(resp, 200, currenciesJsonString);
         } catch (AnyErrorException e) {
             ResponsePrintWriter.printResponse(resp, 500, "Ошибка");
         }
-        String currenciesJsonString = new Gson().toJson(currencies);
-        ResponsePrintWriter.printResponse(resp, 200, currenciesJsonString);
     }
 
 }

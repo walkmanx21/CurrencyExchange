@@ -47,7 +47,6 @@ public class OneCurrencyServlet extends HttpServlet {
             } else {
                 ResponsePrintWriter.printResponse(resp,404, "Валюта не найдена");
             }
-
         } else {
             ResponsePrintWriter.printResponse(resp,400, "Некорректный код валюты");
         }

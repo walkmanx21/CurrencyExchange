@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import rate.RateService;
+import util.CheckDecimalSeparator;
 import util.ResponsePrintWriter;
 
 import java.io.BufferedReader;
@@ -36,20 +37,24 @@ public class OneRateServlet extends HttpServlet {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(req.getInputStream()));
         String rateString = br.readLine();
+
         if (rateString == null) {
             ResponsePrintWriter.printResponse(resp, 400, "Отсутствует нужное поле формы");
             return;
         }
+
         rateString = rateString.replace("rate=", "");
+
         if (rateString.isEmpty()) {
             ResponsePrintWriter.printResponse(resp, 400, "Нужное поле формы не заполнено");
             return;
         }
-        if (rateString.contains("%2C")) {
-            rateString = rateString.replace("%2C", ".");
-        }
+
+        rateString = CheckDecimalSeparator.correction(rateString);
+
         BigDecimal rate =  new BigDecimal(rateString);
         RateRequestDto rateRequestDto = new RateRequestDto(pathInfo.getBaseCurrencyCode(), pathInfo.getTargetCurrencyCode(), rate);
+
         try {
             RateResponseDto rateResponseDto = rateService.updateExchangeRate(rateRequestDto);
             String rateJsonString = new Gson().toJson(rateResponseDto);
@@ -68,20 +73,19 @@ public class OneRateServlet extends HttpServlet {
             ResponsePrintWriter.printResponse(resp, 400, "Коды пары валют отсутствуют в адресе");
             return;
         }
+
         RateRequestDto rateRequestDto = new RateRequestDto(pathInfo.getBaseCurrencyCode(), pathInfo.getTargetCurrencyCode());
         RateResponseDto rateResponseDto = null;
 
         try {
             rateResponseDto = rateService.findOneExchangeRate(rateRequestDto);
+            String currencyJsonString = new Gson().toJson(rateResponseDto);
+            ResponsePrintWriter.printResponse(resp, 200, currencyJsonString);
         } catch (ExchangeRateNotFoundException e) {
             ResponsePrintWriter.printResponse(resp, 404, "Обменный курс для пары не найден");
         } catch (AnyErrorException e) {
             ResponsePrintWriter.printResponse(resp, 500, "Ошибка");
         }
-
-        String currencyJsonString = new Gson().toJson(rateResponseDto);
-        ResponsePrintWriter.printResponse(resp, 200, currencyJsonString);
-
     }
 
     private PathInfo getPathInfo (HttpServletRequest req) {
