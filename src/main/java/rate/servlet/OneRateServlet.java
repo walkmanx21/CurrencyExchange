@@ -20,6 +20,7 @@ import util.ResponsePrintWriter;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 
 
@@ -51,8 +52,14 @@ public class OneRateServlet extends HttpServlet {
         }
 
         rateString = CheckDecimalSeparator.correction(rateString);
+        BigDecimal rate;
 
-        BigDecimal rate =  new BigDecimal(rateString);
+        try {
+            rate = new BigDecimal(rateString);
+        } catch (NumberFormatException e) {
+            ResponsePrintWriter.printResponse(resp, 400, "В поле rate введено некорректное число");
+            return;
+        }
         RateRequestDto rateRequestDto = new RateRequestDto(pathInfo.getBaseCurrencyCode(), pathInfo.getTargetCurrencyCode(), rate);
 
         try {

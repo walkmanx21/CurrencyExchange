@@ -39,9 +39,9 @@ public class AllCurrenciesServlet extends HttpServlet {
         }
 
         CurrencyRequestDto currencyRequestDto = new CurrencyRequestDto(code, fullName, sign);
-        Currency currency = null;
+
         try {
-            currency = currencyService.insertCurrency(currencyRequestDto);
+            Currency currency = currencyService.insertCurrency(currencyRequestDto);
             String currencyJsonString = new Gson().toJson(currency);
             ResponsePrintWriter.printResponse(resp, 201, currencyJsonString);
         } catch (CurrencyAlreadyExistsException e) {
@@ -53,9 +53,8 @@ public class AllCurrenciesServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<Currency> currencies;
         try {
-            currencies = currencyDao.findAllCurrencies();
+            List<Currency> currencies = currencyDao.findAllCurrencies();
             String currenciesJsonString = new Gson().toJson(currencies);
             ResponsePrintWriter.printResponse(resp, 200, currenciesJsonString);
         } catch (AnyErrorException e) {

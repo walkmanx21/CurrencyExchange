@@ -41,8 +41,14 @@ public class CurrencyExchangeServlet extends HttpServlet {
         }
 
         amountString = CheckDecimalSeparator.correction(amountString);
+        BigDecimal amount;
 
-        BigDecimal amount = new BigDecimal(amountString);
+        try {
+            amount = new BigDecimal(amountString);
+        } catch (NumberFormatException e) {
+            ResponsePrintWriter.printResponse(resp, 400, "В поле amount введено некорректное число");
+            return;
+        }
 
         ExchangeRequestDto exchangeRequestDto = new ExchangeRequestDto(baseCurrencyCode, targetCurrencyCode, amount);
         ExchangeResponseDto exchangeResponseDto;

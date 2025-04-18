@@ -40,8 +40,15 @@ public class AllRatesServlet extends HttpServlet {
         }
 
         rateString = CheckDecimalSeparator.correction(rateString);
+        BigDecimal rate;
 
-        BigDecimal rate =  new BigDecimal(rateString);
+        try {
+            rate = new BigDecimal(rateString);
+        } catch (NumberFormatException e) {
+            ResponsePrintWriter.printResponse(resp, 400, "В поле rate введено некорректное число");
+            return;
+        }
+
         RateRequestDto rateRequestDto = new RateRequestDto(baseCurrencyCode, targetCurrencyCode, rate);
         try {
             RateResponseDto rateResponseDto = rateService.insertNewExchangeRate(rateRequestDto);
@@ -54,8 +61,6 @@ public class AllRatesServlet extends HttpServlet {
         } catch (AnyErrorException e) {
             ResponsePrintWriter.printResponse(resp, 500, "Ошибка");
         }
-
-
     }
 
     @Override
