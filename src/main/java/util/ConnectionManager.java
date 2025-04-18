@@ -2,16 +2,18 @@ package util;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public final class ConnectionManager {
-    private static final String URL_KEY = "db.url";
+    private static final String URL = getUrl();
     private static final String POOL_SIZE_KEY = "db.pool.size";
     public static final Integer DEFAULT_POOL_SIZE = 10;
     private static BlockingQueue<Connection> pool;
@@ -50,19 +52,9 @@ public final class ConnectionManager {
         }
     }
 
-    public static void closePool() {
-        for (Connection sourceConnection : sourceConnections) {
-            try {
-                sourceConnection.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
     private static Connection open() {
         try {
-            return DriverManager.getConnection(PropertiesUtil.getProperty(URL_KEY));
+            return DriverManager.getConnection(URL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -74,6 +66,17 @@ public final class ConnectionManager {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static String getUrl() {
+        String url = "jdbc:sqlite:";
+        try {
+             url = url + Objects.requireNonNull(ConnectionManager.class.getResource("/identifier.sqlite")).toURI().getPath();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println(url);
+        return url;
     }
 
 }
