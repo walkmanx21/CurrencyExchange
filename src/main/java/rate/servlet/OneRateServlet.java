@@ -32,7 +32,7 @@ public class OneRateServlet extends HttpServlet {
     protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PathInfo pathInfo = getPathInfo(req);
         if (pathInfo == null) {
-            ResponsePrintWriter.printResponse(resp, 400, "Коды валют пары отсутствуют в адресе");
+            ResponsePrintWriter.printResponse(resp, 400, "Коды пары валют отсутствуют в адресе");
             return;
         }
 
@@ -60,6 +60,7 @@ public class OneRateServlet extends HttpServlet {
             ResponsePrintWriter.printResponse(resp, 400, "В поле rate введено некорректное число");
             return;
         }
+
         RateRequestDto rateRequestDto = new RateRequestDto(pathInfo.getBaseCurrencyCode(), pathInfo.getTargetCurrencyCode(), rate);
 
         try {

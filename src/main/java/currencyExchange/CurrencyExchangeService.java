@@ -6,6 +6,7 @@ import exception.AnyErrorException;
 import rate.RateDao;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 
 public class CurrencyExchangeService {
@@ -25,11 +26,13 @@ public class CurrencyExchangeService {
         String secondCurrencyCode = exchange.getTargetCurrencyCode();
         String usd = "USD";
         BigDecimal convertedAmount;
+        BigDecimal convertedAmountRounded;
 
         if (checkExRateInDatabase(firstCurrencyCode, secondCurrencyCode)) {
             exchange.setRate(exchangeDao.getOnlyRateField(firstCurrencyCode, secondCurrencyCode));
             convertedAmount = exchange.getRate().multiply(exchange.getAmount());
-            exchange.setConvertedAmount(convertedAmount);
+            convertedAmountRounded = convertedAmount.setScale(2, RoundingMode.FLOOR);
+            exchange.setConvertedAmount(convertedAmountRounded);
         }
 
         if (checkExRateInDatabase(secondCurrencyCode, firstCurrencyCode)) {
@@ -37,16 +40,18 @@ public class CurrencyExchangeService {
             BigDecimal rate = new BigDecimal("1.000000").divide(reverseRate, RoundingMode.FLOOR);
             exchange.setRate(rate);
             convertedAmount = rate.multiply(exchange.getAmount());
-            exchange.setConvertedAmount(convertedAmount);
+            convertedAmountRounded = convertedAmount.setScale(2, RoundingMode.FLOOR);
+            exchange.setConvertedAmount(convertedAmountRounded);
         }
 
         if (checkExRateInDatabase(usd, firstCurrencyCode) && checkExRateInDatabase(usd, secondCurrencyCode)) {
             BigDecimal firstCurrencyRate = exchangeDao.getOnlyRateField(usd, firstCurrencyCode);
             BigDecimal secondCurrencyRate = exchangeDao.getOnlyRateField(usd, secondCurrencyCode);
-            BigDecimal rate = secondCurrencyRate.divide(firstCurrencyRate, RoundingMode.FLOOR);
+            BigDecimal rate = secondCurrencyRate.divide(firstCurrencyRate, MathContext.DECIMAL32).setScale(2, RoundingMode.FLOOR);
             convertedAmount = rate.multiply(exchange.getAmount());
             exchange.setRate(rate);
-            exchange.setConvertedAmount(convertedAmount);
+            convertedAmountRounded = convertedAmount.setScale(2, RoundingMode.FLOOR);
+            exchange.setConvertedAmount(convertedAmountRounded);
         }
         buildFinalExchange(exchange);
         return buildExchangeResponseDto(exchange);
